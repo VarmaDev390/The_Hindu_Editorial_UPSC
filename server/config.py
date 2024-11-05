@@ -1,0 +1,1 @@
+RSS_FEED_URL = "https://www.thehindu.com/opinion/editorial/feeder/default.rss"
