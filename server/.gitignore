@@ -1,0 +1,27 @@
+# Virtual environment
+venv1/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# Build artifacts
+*.jar
+*.exe
+
+# Logs
+*.log
+
+# Environment-specific files
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# SQLite database file
+*.db
