@@ -100,7 +100,7 @@
 
 from flask import Flask
 from routes import routes
-from database import initialize_db    # Ensure MongoDB connection is initialized
+from init_db import initialize_db    # Ensure MongoDB connection is initialized
 
 # Initialize Flask app
 app = Flask(__name__)

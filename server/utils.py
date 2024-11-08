@@ -5,16 +5,17 @@ from nltk.corpus import words as nltk_words
 # from Llm_API.openAi import summarize_article
 from Llm_API.bart import summarize_article
 
+
 # Download the NLTK words dataset (you only need to do this once)
 import nltk
 nltk.download('words')
 
-common_words = set([
-    "the", "be", "to", "of", "and", "a", "in", "that", "have", "it", 
-    "you", "he", "with", "on", "do", "at", "by", "this", "but", "from", 
-    "not", "or", "which", "all", "she", "an", "they", "my", "one", "if"
-    # Add more common words...
-])
+# common_words = set([
+#     "the", "be", "to", "of", "and", "a", "in", "that", "have", "it", 
+#     "you", "he", "with", "on", "do", "at", "by", "this", "but", "from", 
+#     "not", "or", "which", "all", "she", "an", "they", "my", "one", "if"
+#     # Add more common words...
+# ])
 
 # Get the set of English words
 english_words = set(nltk_words.words())
