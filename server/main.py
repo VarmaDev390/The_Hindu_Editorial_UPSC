@@ -1,6 +1,6 @@
 # import feedparser
 # from flask import Flask, jsonify
-# from server.src.feeds.config import RSS_FEED_URL
+# # from server.src.feeds.config import RSS_FEED_URL
 # import requests
 # from bs4 import BeautifulSoup
 # import re
@@ -67,7 +67,7 @@
     
 # def fetch_articles(limit=None):
 #     # Parse the RSS feed
-#     feed = feedparser.parse(RSS_FEED_URL)
+#     feed = feedparser.parse("https://www.thehindu.com/opinion/editorial/feeder/default.rss")
 #     articles = []
     
 #     # Extract relevant details from each entry
@@ -101,12 +101,15 @@
 from flask import Flask
 from routes import routes
 from init_db import initialize_db    # Ensure MongoDB connection is initialized
+from flask_cors import CORS
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Register routes blueprint
 app.register_blueprint(routes)
+
+CORS(app, origins="http://localhost:5173")
 
 
 if __name__ == "__main__":
