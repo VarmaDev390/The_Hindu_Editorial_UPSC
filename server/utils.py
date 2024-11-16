@@ -61,6 +61,7 @@ def fetch_full_article_content(url):
         return "Full article content not available."
 
 def parse_date(date):
+    "for converting published date from hindu(ist) to utc"
     date = parser.parse(date)
     # print("date", date)
 
@@ -81,7 +82,38 @@ def convert_ist_to_utc(ist_date):
     utc_date = local_date.astimezone(utc_zone)
     return utc_date
 
-def fetch_articles(limit=None):
+def fetch_articles(date_str, limit=None):
+    # Parse the RSS feed
+    feed = feedparser.parse("https://www.thehindu.com/opinion/editorial/feeder/default.rss")
+    articles = []
+
+    # Parse the provided date string in IST and convert to UTC
+    date_utc = parse_date(date_str)
+    print("date_utc",date_utc)
+
+    # Extract relevant details from each entry
+    for entry in feed.entries:
+        publish_date = parse_date(entry.published)
+        print("publish_date",publish_date)
+
+        # Compare the parsed dates, both in UTC
+        if publish_date.date() == date_utc.date():
+            article_content = fetch_full_article_content(entry.link)
+            # ... rest of your article processing code ...
+            article = {
+                "title": entry.title,
+                "link": entry.link,
+                "description": entry.description,
+                "full_content": article_content,
+                # "summary" : article_summary,
+                "published_date": publish_date,
+                "is_read" : False
+            }
+            articles.append(article)
+
+    return articles
+
+# def fetch_articles(limit=None):
     # Parse the RSS feed
     feed = feedparser.parse("https://www.thehindu.com/opinion/editorial/feeder/default.rss")
     articles = []
@@ -90,7 +122,9 @@ def fetch_articles(limit=None):
     for entry in feed.entries[:limit]:
         # print("entry",entry)
         article_content = fetch_full_article_content(entry.link)
+        # print("entry.published", entry.published)
         publish_date = parse_date(entry.published)
+        # publish_date format = 2024-11-14 19:00:00+00:00
         # article_summary = summarize_article(article_content)
         # print("article_content", article_content)
         article = {

@@ -11,7 +11,8 @@ routes = Blueprint("routes", __name__)
 @routes.route("/fetch-articles", methods=["GET"])
 def get_articles():
     #  limit = request.args.get("limit", type=int)
-    articles = fetch_articles(limit=1)
+    date_str = request.args.get("date")
+    articles = fetch_articles(date_str,limit=1 )
     for article in articles:
         # article['vocabulary'] = extract_difficult_vocabulary(article['full_content']) 
         insert_article(article)  
@@ -22,6 +23,7 @@ def get_articles():
 def get_articles_by_date():
     # Get the date from query parameters
     date_str = request.args.get("date")
+    print("date",date_str)
     
     if not date_str:
         return jsonify({"error": "Please provide a date in YYYY-MM-DD format."}), 400
@@ -29,6 +31,9 @@ def get_articles_by_date():
     try:
         # Parse the date provided by the user (in YYYY-MM-DD format)
         user_date = datetime.strptime(date_str, "%Y-%m-%d")
+
+        print("user_date",user_date)
+
         
         # Fetch articles by the specified date
         articles = get_all_articles_by_date(user_date)
