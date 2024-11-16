@@ -51,12 +51,20 @@ def get_all_articles_by_date(date_in_ist):
     from utils import convert_ist_to_utc
     try:
         # Convert the start and end of the provided date from IST to UTC
-        start_date = convert_ist_to_utc(datetime.combine(date_in_ist, datetime.min.time()))
-        end_date = start_date + timedelta(days=1)
+        # start_date_IST = This creates a datetime object representing the start of the day in IST. 
+        # date_in_ist = 11/16/2024 16:30 -- start_date_IST = 16/11/2024 00:00 (midnight)
+        start_date_IST = datetime.combine(date_in_ist, datetime.min.time())
+        # start_date_IST is converted to UTC
+        # start_date_UTC = 15/11/2024 18:30
+        # format 2024-11-15 18:30:00+00:00
+        start_date_UTC = convert_ist_to_utc(start_date_IST)
+        # end_date_UTC = 16/11/2024 18:30
+        end_date_UTC = start_date_UTC + timedelta(days=1)
+
 
         # Query articles in the UTC range for the specified date
         articles = list(articles_collection.find({
-            "published_date": {"$gte": start_date, "$lt": end_date}
+            "published_date": {"$gte": start_date_UTC, "$lt": end_date_UTC}
         }, {"_id": 0}))
 
         print(f"Fetched {len(articles)} articles for date {date_in_ist}")
