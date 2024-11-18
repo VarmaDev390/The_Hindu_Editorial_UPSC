@@ -22,7 +22,7 @@
 
 from init_db import db, articles_collection, common_words_collection
 from bson import ObjectId
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta, timezone
 from dateutil import tz
 
 
@@ -46,28 +46,36 @@ def get_all_articles():
         print(f"Error fetching articles: {e}")
         return []
 
-def get_all_articles_by_date(date_in_ist):
+def get_all_articles_by_date(datetime_in_IST):
     #moved import inside as database and utils are causing cirucular imports
-    from utils import convert_ist_to_utc
+    from utils import convert_ist_to_utc, parse_date
+
+    # print("parsed date_in_ist in get_all_articles_by_date", parse_date(date_in_ist))
+
     try:
         # Convert the start and end of the provided date from IST to UTC
         # start_date_IST = This creates a datetime object representing the start of the day in IST. 
         # date_in_ist = 11/16/2024 16:30 -- start_date_IST = 16/11/2024 00:00 (midnight)
-        start_date_IST = datetime.combine(date_in_ist, datetime.min.time())
+
+        start_datetime_IST = datetime.combine(datetime_in_IST, datetime.min.time())
+        end_datetime_IST = start_datetime_IST + timedelta(days=1)
         # start_date_IST is converted to UTC
         # start_date_UTC = 15/11/2024 18:30
         # format 2024-11-15 18:30:00+00:00
-        start_date_UTC = convert_ist_to_utc(start_date_IST)
         # end_date_UTC = 16/11/2024 18:30
-        end_date_UTC = start_date_UTC + timedelta(days=1)
+        start_datetime_UTC = convert_ist_to_utc(start_datetime_IST)
+        end_datetime_UTC = convert_ist_to_utc(end_datetime_IST)
 
 
         # Query articles in the UTC range for the specified date
         articles = list(articles_collection.find({
-            "published_date": {"$gte": start_date_UTC, "$lt": end_date_UTC}
+            "published_date": {"$gte": start_datetime_UTC, "$lt": end_datetime_UTC}
         }, {"_id": 0}))
 
-        print(f"Fetched {len(articles)} articles for date {date_in_ist}")
+        for article in articles:
+            article['published_date'] = article['published_date'].replace(tzinfo=timezone.utc)
+
+        print(f"Fetched {len(articles)} articles for date {datetime_in_IST}")
         return articles
     except Exception as e:
         print(f"Error fetching articles by date: {e}")
