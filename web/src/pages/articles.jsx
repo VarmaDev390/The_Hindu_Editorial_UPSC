@@ -22,8 +22,8 @@ const ArticlesPage = () => {
           `${import.meta.env.VITE_BACKEND_URL}/get-articles`,
           { params: { date: currDate.format('YYYY-MM-DD') } } // Add currDate as query parameter
         );
-        setArticles(response.data);
-        console.log("response.data",response.data)
+        setArticles(response.data.articles);
+        console.log("response.data",response.data.articles)
       } catch (err) {
         console.error(err);
         setError("Failed to load articles");
@@ -43,11 +43,11 @@ const ArticlesPage = () => {
       {loading && <Typography>Loading articles...</Typography>}
       {error && <Typography color="error">{error}</Typography>}
       <Grid2 container spacing={3}>
-        {/* {articles.map((article, index) => (
+        {articles?.map((article, index) => (
           <Grid2 size={{ xs: 12, sm:6, md: 4 }} key={index}>
-            <ArticleCard/>
+            <ArticleCard data={article}/>
           </Grid2>
-        ))} */}
+        ))}
       </Grid2>
     </Layout>
       //   <div>

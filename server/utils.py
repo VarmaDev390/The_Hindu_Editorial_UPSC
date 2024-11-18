@@ -61,7 +61,7 @@ def fetch_full_article_content(url):
         return "Full article content not available."
 
 def parse_date(date):
-    "for converting published date from hindu(ist) to utc"
+    "for converting published date(string format) from hindu(ist) to utc"
     date = parser.parse(date)
     # print("date", date)
 
@@ -71,6 +71,7 @@ def parse_date(date):
     return date_utc
 
 def convert_ist_to_utc(ist_date):
+    "for converting date(date time format) to utc"
     # Define the IST timezone
     ist_zone = tz.gettz("Asia/Kolkata")
     utc_zone = tz.UTC
@@ -82,22 +83,27 @@ def convert_ist_to_utc(ist_date):
     utc_date = local_date.astimezone(utc_zone)
     return utc_date
 
-def fetch_articles(date_str, limit=None):
+
+def convert_utc_to_ist(utc_datetime):
+    ist_zone = tz.gettz('Asia/Kolkata')
+    return utc_datetime.astimezone(ist_zone).isoformat()
+
+def fetch_articles(date_str_IST, limit=None):
     # Parse the RSS feed
     feed = feedparser.parse("https://www.thehindu.com/opinion/editorial/feeder/default.rss")
     articles = []
 
-    # Parse the provided date string in IST and convert to UTC
-    date_utc = parse_date(date_str)
-    print("date_utc",date_utc)
+    # Parse the provided date string in IST and convert to UTC datetime
+    datetime_UTC = parse_date(date_str_IST)
+    print("datetime_UTC",datetime_UTC)
 
     # Extract relevant details from each entry
     for entry in feed.entries:
-        publish_date = parse_date(entry.published)
-        print("publish_date",publish_date)
+        publish_datetime_UTC = parse_date(entry.published)
+        # print("publish_datetime_UTC",publish_datetime_UTC)
 
         # Compare the parsed dates, both in UTC
-        if publish_date.date() == date_utc.date():
+        if publish_datetime_UTC.date() == datetime_UTC.date():
             article_content = fetch_full_article_content(entry.link)
             # ... rest of your article processing code ...
             article = {
@@ -106,7 +112,7 @@ def fetch_articles(date_str, limit=None):
                 "description": entry.description,
                 "full_content": article_content,
                 # "summary" : article_summary,
-                "published_date": publish_date,
+                "published_date": publish_datetime_UTC,
                 "is_read" : False
             }
             articles.append(article)
