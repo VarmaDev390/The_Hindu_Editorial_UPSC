@@ -39,7 +39,7 @@ const Layout = ({ children }) => {
       </AppBar>
 
       {/* Page Content */}
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Container maxWidth="lg" sx={{ mt: 10 }}>
         {children}
       </Container>
     </div>

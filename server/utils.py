@@ -105,15 +105,19 @@ def fetch_articles(date_str_IST, limit=None):
         # Compare the parsed dates, both in UTC
         if publish_datetime_UTC.date() == datetime_UTC.date():
             article_content = fetch_full_article_content(entry.link)
+            article_summary = summarize_article(article_content)
+            article_vocabulary = extract_difficult_vocabulary(article_content)
             # ... rest of your article processing code ...
             article = {
                 "title": entry.title,
                 "link": entry.link,
                 "description": entry.description,
                 "full_content": article_content,
-                # "summary" : article_summary,
+                "summary" : article_summary,
                 "published_date": publish_datetime_UTC,
-                "is_read" : False
+                "is_read" : False,
+                "article_id": entry.guid,
+                "Vocabulary": article_vocabulary
             }
             articles.append(article)
 

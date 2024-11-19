@@ -17,10 +17,11 @@ import { useNavigate } from 'react-router-dom';
 
 const ArticleCard = ({data}) => {
   const navigate = useNavigate();
+  console.log(data)
 
-  const handleReadArticle = () => {
+  const handleReadArticle = (data) => {
     try {
-      navigate('/article/:id', { state: { article: data } });
+      navigate(`/article/:${data.article_id}`, { state: { article: data } });
     } catch (error) {
       console.error('Navigation error:', error);
     }
@@ -58,7 +59,7 @@ const ArticleCard = ({data}) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button variant="contained" color="primary" fullWidth onClick={handleReadArticle}>
+        <Button variant="contained" color="primary" fullWidth onClick={() => handleReadArticle(data)}>
           READ ARTICLE
         </Button>
       </CardActions>

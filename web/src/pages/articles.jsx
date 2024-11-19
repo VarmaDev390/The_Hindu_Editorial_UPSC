@@ -11,7 +11,7 @@ const ArticlesPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { currDate} = useContext(ContextApp)
-  console.log("url", currDate)
+  // console.log("url", currDate)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +40,7 @@ const ArticlesPage = () => {
       <Typography variant="h4" gutterBottom>
         Articles
       </Typography>
-      {loading && <Typography>Loading articles...</Typography>}
+      {loading && <Typography>Please wait we are summarizing articles...</Typography>}
       {error && <Typography color="error">{error}</Typography>}
       <Grid2 container spacing={3}>
         {articles?.map((article, index) => (
