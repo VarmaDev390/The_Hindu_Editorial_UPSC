@@ -27,6 +27,8 @@ const ArticleCard = ({data}) => {
     }
   };
 
+
+
   return (
     <Card sx={{ maxWidth: 345, borderRadius: 2, boxShadow: 3 }}>
       {/* <CardMedia
@@ -53,9 +55,9 @@ const ArticleCard = ({data}) => {
         </Typography>
         <Typography variant="body2" color="textSecondary" mt={1}>
           {data.description}
-          <Typography variant="body2" color="primary" component="span" sx={{ cursor: 'pointer' }}>
+          {/* <Typography variant="body2" color="primary" component="span" sx={{ cursor: 'pointer' }}>
             + Read More
-          </Typography>
+          </Typography> */}
         </Typography>
       </CardContent>
       <CardActions>
@@ -64,9 +66,9 @@ const ArticleCard = ({data}) => {
         </Button>
       </CardActions>
       <Box px={2} py={1} display="flex" justifyContent="space-between" borderTop={1} borderColor="divider">
-        <Typography variant="caption" color="textSecondary">
+        {/* <Typography variant="caption" color="textSecondary">
           PROVIDED BY: Schiller-Stroman
-        </Typography>
+        </Typography> */}
         <Typography variant="caption" color="textSecondary">
           {data.published_date}
         </Typography>

@@ -20,7 +20,7 @@
 #         db.create_collection("articles")
 #     print("MongoDB connection initialized")
 
-from init_db import db, articles_collection, common_words_collection
+from init_db import db, articles_collection, common_words_collection, Important_words_collection
 from bson import ObjectId
 from datetime import datetime,timedelta, timezone
 from dateutil import tz
@@ -47,6 +47,8 @@ def get_all_articles():
         return []
 
 def get_all_articles_by_date(datetime_in_IST):
+    print("get all articles from database")
+
     #moved import inside as database and utils are causing cirucular imports
     from utils import convert_ist_to_utc, parse_date
 
@@ -81,6 +83,16 @@ def get_all_articles_by_date(datetime_in_IST):
         print(f"Error fetching articles by date: {e}")
         return []
 
+def get_article_by_id(article_id) :
+    try:
+        article = articles_collection.find_one({"article_id":article_id})
+        print(f"Fetched article by {article}")
+        return article
+    except Exception as e:
+        print(f"Error fetching articles: {e}")
+        return []
+
+
 def get_common_words():
     try:
         common_words_entry = common_words_collection.find_one({}, {"_id": 0, "words": 1})
@@ -96,10 +108,72 @@ def get_common_words():
     
 def add_common_word(new_word):
     try:
-        common_words_collection.update_one({}, {"$addToSet": {"words": {"$each": new_word}}}, upsert=True)
+        common_words_collection.update_one({}, {"$addToSet": {"words": {"$each": [new_word]}}}, upsert=True)
         print("Common words updated successfully.")
     except Exception as e:
         print(f"Error updating common words: {e}")
+
+# def add_imp_word(word, meaning):
+#     print("word",word)
+#     try:
+#         # Ensure unique words in the imp_vocab array
+#         common_words_collection.create_index([("imp_vocab.word", 1)], unique=True)
+
+#         common_words_collection.update_one(
+#             {},
+#             {"$addToSet": {"imp_vocab": {"word": word, "meaning": meaning}}},
+#             upsert=True
+#         )
+
+#         print("Important vocab updated successfully.")
+#     except Exception as e:
+#         if "E11000 duplicate key error collection" in str(e):
+#             print("Word already exists in the imp_vocab")
+#         else:
+#             print(f"Error updating Important vocab: {e}")
+
+def add_imp_word(user_id, word, meaning):
+    try:
+        # Check if the word already exists for the specific user
+        existing_word = Important_words_collection.find_one({"user_id": user_id, "vocab.word": word})
+
+        if existing_word:
+            print("Word already exists in the user's vocabulary")
+            return
+
+        # Add the word if it doesn't exist
+        Important_words_collection.update_one(
+            {"user_id": user_id},
+            {"$addToSet": {"vocab": {"word": word, "meaning": meaning}}},
+            upsert=True
+        )
+
+        print("Important vocab updated successfully.")
+    except Exception as e:
+        print(f"Error updating Important vocab: {e}")
+
+def del_vocab_from_article(word, article_id):
+    try:
+        article = articles_collection.find_one({"article_id": article_id})
+
+        if article:
+            # Filter the vocabulary array to remove the specified word
+            new_vocabulary = []
+            for w in article['Vocabulary']:
+                if w != word:
+                    new_vocabulary.append(w)
+            
+            # Update the article with the new vocabulary array
+            articles_collection.update_one(
+                {"article_id": article_id},
+                {"$set": {"Vocabulary": new_vocabulary}}
+            )
+            print("Vocabulary word deleted successfully.")
+        else:
+            print("Article not found.")
+
+    except Exception as e:
+        print(f"Error deleting vocabulary word: {e}")
 
 def delete_all_articles():
     try:
