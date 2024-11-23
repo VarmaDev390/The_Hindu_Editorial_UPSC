@@ -1,7 +1,7 @@
 from flask import Blueprint,request,jsonify
 from utils import fetch_articles, extract_difficult_vocabulary, convert_utc_to_ist
 import requests
-from database import insert_article, get_all_articles_by_date
+from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word
 from datetime import datetime
 
 
@@ -69,12 +69,12 @@ def get_articles_by_date():
 
         # Fetch articles from the database for the given date
         db_articles = get_all_articles_by_date(user_datetime_IST)
-        print("db_articles (UTC)", db_articles)
+        # print("db_articles (UTC)", db_articles)
 
 
         # Fetch articles from the RSS feed for the same date
         rss_feed_articles = fetch_articles(user_date_str_IST)
-        print("rss_feed_articles (UTC)", rss_feed_articles)
+        # print("rss_feed_articles (UTC)", rss_feed_articles)
 
 
         # Compare and add only new articles from the RSS feed to the database
@@ -93,7 +93,7 @@ def get_articles_by_date():
             article['published_date'] = convert_utc_to_ist(article['published_date'])
             print("Article published_date (IST)", article['published_date'])
 
-        print("all_articles (IST)", all_articles)
+        # print("all_articles (IST)", all_articles)
 
         return jsonify({"articles": all_articles}), 200
 
@@ -103,6 +103,51 @@ def get_articles_by_date():
         print(f"Error fetching articles: {e}")
         return jsonify({"error": "An error occurred while fetching articles."}), 500
 
+
+@routes.route("/delete-vocab", methods=["POST"])
+def delete_vocabulary():
+    try:
+        # Get the word from the request body (assuming JSON format)
+        data = request.get_json()
+        word = data.get('word')
+        article_id = data.get('articleId')
+
+        # Validate the input
+        if not word or not article_id:
+            return jsonify({"error": "Missing word or articleId"}), 400
+
+        # Add the word to common words
+        add_common_word(word)
+
+        # Delete the vocab from the article
+        del_vocab_from_article(word, article_id)
+
+        # Get the updated article
+        article = get_article_by_id(article_id)
+
+        # Convert ObjectId to string before serializing
+        article['_id'] = str(article['_id'])
+
+        return jsonify({"article": article}), 200
+    except Exception as e:
+        print(f"Error deleting vocabulary: {e}")
+        return jsonify({"error": "An error occurred while deleting Vocabulary."}), 500
+
+@routes.route("/add-vocab", methods=["POST"])
+def add_vocabulary():
+    try:
+        # Get the word and meaning from the request body (assuming JSON format)
+        data = request.get_json()
+        word = data.get('word')
+        meaning = data.get('meaning', '')  # Default meaning to an empty string if not provided
+
+        # Add the word and meaning to important vocabulary
+        add_imp_word("ravi",word, meaning)
+
+        return jsonify({"message": "Word and meaning added successfully"}), 200
+    except Exception as e:
+        print(f"Error adding vocabulary: {e}")
+        return jsonify({"error": "An error occurred while adding the Vocabulary."}), 500
 
 @routes.route("/test", methods=["GET"])
 def test():

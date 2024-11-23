@@ -50,21 +50,7 @@ const ArticlesPage = () => {
         ))}
       </Grid2>
     </Layout>
-      //   <div>
-      //   <h1>Articles</h1>
-      //   {loading && <p>Loading articles...</p>}
-      //   {error && <p>{error}</p>}
-      //   <ul>
-      //     {articles.map((article, index) => (
-      //       <li key={index}>
-      //         <h3>{article.title}</h3>
-      //         <p>{article.summary}</p>
-      //         <a href={`/article/${index}`}>Read more</a>
-      //       </li>
-      //     ))}
-      //   </ul>
-      // </div>
-    // <>Ravi</>
+
     )
 }
 

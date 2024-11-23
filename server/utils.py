@@ -89,6 +89,7 @@ def convert_utc_to_ist(utc_datetime):
     return utc_datetime.astimezone(ist_zone).isoformat()
 
 def fetch_articles(date_str_IST, limit=None):
+    print("fetch articles from rss")
     # Parse the RSS feed
     feed = feedparser.parse("https://www.thehindu.com/opinion/editorial/feeder/default.rss")
     articles = []
