@@ -9,6 +9,12 @@ import feedparser
 from database import get_common_words
 from datetime import datetime, timezone
 from dateutil import parser, tz
+from dotenv import load_dotenv
+import os
+
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Download the NLTK words dataset (you only need to do this once)
@@ -91,7 +97,8 @@ def convert_utc_to_ist(utc_datetime):
 def fetch_articles(date_str_IST, limit=None):
     print("fetch articles from rss")
     # Parse the RSS feed
-    feed = feedparser.parse("https://www.thehindu.com/opinion/editorial/feeder/default.rss")
+    feedURL = os.getenv("RSS_FEED_URL")
+    feed = feedparser.parse(feedURL)
     articles = []
 
     # Parse the provided date string in IST and convert to UTC datetime
@@ -126,28 +133,28 @@ def fetch_articles(date_str_IST, limit=None):
 
 # def fetch_articles(limit=None):
     # Parse the RSS feed
-    feed = feedparser.parse("https://www.thehindu.com/opinion/editorial/feeder/default.rss")
-    articles = []
+    # feed = feedparser.parse("https://www.thehindu.com/opinion/editorial/feeder/default.rss")
+    # articles = []
     
-    # Extract relevant details from each entry
-    for entry in feed.entries[:limit]:
-        # print("entry",entry)
-        article_content = fetch_full_article_content(entry.link)
-        # print("entry.published", entry.published)
-        publish_date = parse_date(entry.published)
-        # publish_date format = 2024-11-14 19:00:00+00:00
-        # article_summary = summarize_article(article_content)
-        # print("article_content", article_content)
-        article = {
-            "title": entry.title,
-            "link": entry.link,
-            "description": entry.description,
-            "full_content": article_content,
-            # "summary" : article_summary,
-            "published_date": publish_date,
+    # # Extract relevant details from each entry
+    # for entry in feed.entries[:limit]:
+    #     # print("entry",entry)
+    #     article_content = fetch_full_article_content(entry.link)
+    #     # print("entry.published", entry.published)
+    #     publish_date = parse_date(entry.published)
+    #     # publish_date format = 2024-11-14 19:00:00+00:00
+    #     # article_summary = summarize_article(article_content)
+    #     # print("article_content", article_content)
+    #     article = {
+    #         "title": entry.title,
+    #         "link": entry.link,
+    #         "description": entry.description,
+    #         "full_content": article_content,
+    #         # "summary" : article_summary,
+    #         "published_date": publish_date,
             
             
-        }
-        articles.append(article)
+    #     }
+    #     articles.append(article)
     
-    return articles
+    # return articles
