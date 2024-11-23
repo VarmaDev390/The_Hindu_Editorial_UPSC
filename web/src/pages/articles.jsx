@@ -19,7 +19,7 @@ const ArticlesPage = () => {
 
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/get-articles`,
+          `${import.meta.env.BACKEND_URL}/get-articles`,
           { params: { date: currDate.format('YYYY-MM-DD') } } // Add currDate as query parameter
         );
         setArticles(response.data.articles);
@@ -36,20 +36,34 @@ const ArticlesPage = () => {
   }, [currDate]); 
 
     return (
-      <Layout>
-      <Typography variant="h4" gutterBottom>
-        Articles
-      </Typography>
-      {loading && <Typography>Please wait we are summarizing articles...</Typography>}
-      {error && <Typography color="error">{error}</Typography>}
-      <Grid2 container spacing={3}>
-        {articles?.map((article, index) => (
-          <Grid2 size={{ xs: 12, sm:6, md: 4 }} key={index}>
-            <ArticleCard data={article}/>
-          </Grid2>
-        ))}
-      </Grid2>
-    </Layout>
+
+<Layout>
+  <Typography variant="h4" gutterBottom>
+    Articles
+  </Typography>
+  
+  {loading && (
+    <Typography>Please wait, we are summarizing articles...</Typography>
+  )}
+
+  {!loading && error && (
+    <Typography color="error">{error}</Typography>
+  )}
+
+  {!loading && !error && articles.length > 0 && (
+    <Grid2 container spacing={3}>
+      {articles.map((article, index) => (
+        <Grid2 size={{ xs: 12, sm:6, md: 4 }} key={index}>
+          <ArticleCard data={article} />
+        </Grid2>
+      ))}
+    </Grid2>
+  )}
+
+  {!loading && !error && articles.length === 0 && (
+    <Typography>No articles found for the selected date.</Typography>
+  )}
+</Layout>
 
     )
 }
