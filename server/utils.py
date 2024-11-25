@@ -94,67 +94,88 @@ def convert_utc_to_ist(utc_datetime):
     ist_zone = tz.gettz('Asia/Kolkata')
     return utc_datetime.astimezone(ist_zone).isoformat()
 
-def fetch_articles(date_str_IST, limit=None):
-    print("fetch articles from rss")
-    # Parse the RSS feed
+# def fetch_articles(date_str_IST, limit=None):
+#     print("fetch articles from rss")
+#     # Parse the RSS feed
+#     feedURL = os.getenv("RSS_FEED_URL")
+#     feed = feedparser.parse(feedURL)
+#     articles = []
+
+#     # Parse the provided date string in IST and convert to UTC datetime
+#     datetime_UTC = parse_date(date_str_IST)
+#     print("datetime_UTC",datetime_UTC)
+
+#     # Extract relevant details from each entry
+#     for entry in feed.entries:
+#         publish_datetime_UTC = parse_date(entry.published)
+#         # print("publish_datetime_UTC",publish_datetime_UTC)
+
+#         # Compare the parsed dates, both in UTC
+#         if publish_datetime_UTC.date() == datetime_UTC.date():
+#             article_content = fetch_full_article_content(entry.link)
+#             article_summary = summarize_article(article_content)
+#             article_vocabulary = extract_difficult_vocabulary(article_content)
+#             # ... rest of your article processing code ...
+#             article = {
+#                 "title": entry.title,
+#                 "link": entry.link,
+#                 "description": entry.description,
+#                 "full_content": article_content,
+#                 "summary" : article_summary,
+#                 "published_date": publish_datetime_UTC,
+#                 "is_read" : False,
+#                 "article_id": entry.guid,
+#                 "Vocabulary": article_vocabulary
+#             }
+#             articles.append(article)
+
+#     return articles
+
+def fetch_articles_metadata(date_str_IST):
+    """
+    Fetch metadata of articles from RSS feed for the given date.
+    """
+    print("Fetching article metadata from RSS feed")
     feedURL = os.getenv("RSS_FEED_URL")
     feed = feedparser.parse(feedURL)
-    articles = []
+    metadata = []
 
     # Parse the provided date string in IST and convert to UTC datetime
     datetime_UTC = parse_date(date_str_IST)
-    print("datetime_UTC",datetime_UTC)
 
-    # Extract relevant details from each entry
     for entry in feed.entries:
         publish_datetime_UTC = parse_date(entry.published)
-        # print("publish_datetime_UTC",publish_datetime_UTC)
-
-        # Compare the parsed dates, both in UTC
         if publish_datetime_UTC.date() == datetime_UTC.date():
-            article_content = fetch_full_article_content(entry.link)
-            article_summary = summarize_article(article_content)
-            article_vocabulary = extract_difficult_vocabulary(article_content)
-            # ... rest of your article processing code ...
-            article = {
+            metadata.append({
                 "title": entry.title,
                 "link": entry.link,
-                "description": entry.description,
-                "full_content": article_content,
-                "summary" : article_summary,
                 "published_date": publish_datetime_UTC,
-                "is_read" : False,
                 "article_id": entry.guid,
-                "Vocabulary": article_vocabulary
-            }
-            articles.append(article)
+            })
 
-    return articles
+    return metadata
 
-# def fetch_articles(limit=None):
-    # Parse the RSS feed
-    # feed = feedparser.parse("https://www.thehindu.com/opinion/editorial/feeder/default.rss")
-    # articles = []
-    
-    # # Extract relevant details from each entry
-    # for entry in feed.entries[:limit]:
-    #     # print("entry",entry)
-    #     article_content = fetch_full_article_content(entry.link)
-    #     # print("entry.published", entry.published)
-    #     publish_date = parse_date(entry.published)
-    #     # publish_date format = 2024-11-14 19:00:00+00:00
-    #     # article_summary = summarize_article(article_content)
-    #     # print("article_content", article_content)
-    #     article = {
-    #         "title": entry.title,
-    #         "link": entry.link,
-    #         "description": entry.description,
-    #         "full_content": article_content,
-    #         # "summary" : article_summary,
-    #         "published_date": publish_date,
-            
-            
-    #     }
-    #     articles.append(article)
-    
-    # return articles
+
+def process_new_articles(new_articles_metadata):
+    """
+    Process new articles by fetching content, summarizing, and extracting vocabulary.
+    """
+    processed_articles = []
+    for article_meta in new_articles_metadata:
+        article_content = fetch_full_article_content(article_meta["link"])
+        article_summary = summarize_article(article_content)
+        article_vocabulary = extract_difficult_vocabulary(article_content)
+
+        processed_article = {
+            "title": article_meta["title"],
+            "link": article_meta["link"],
+            "full_content": article_content,
+            "summary": article_summary,
+            "published_date": article_meta["published_date"],
+            "is_read": False,
+            "article_id": article_meta["article_id"],
+            "Vocabulary": article_vocabulary,
+        }
+        processed_articles.append(processed_article)
+
+    return processed_articles
