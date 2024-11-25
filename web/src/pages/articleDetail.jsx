@@ -15,7 +15,7 @@ const ArticleDetailPage = () => {
 
   const handleDelete = async (word) => {
     try {
-      const response = await axios.post(`${import.meta.env.BACKEND_URL}/delete-vocab`, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/delete-vocab`, {
         word: word,
         articleId: article.article_id
       });
@@ -40,7 +40,7 @@ const ArticleDetailPage = () => {
   const handleSave = async (word, meaning = '') => {
     console.log("word", word, meaning)
     try {
-      const response = await axios.post(`${import.meta.env.BACKEND_URL}/add-vocab`, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/add-vocab`, {
         word,
         meaning, // Include meaning if required by your backend
       });
