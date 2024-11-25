@@ -11,7 +11,7 @@ const ArticlesPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { currDate} = useContext(ContextApp)
-  // console.log("url", currDate)
+  console.log("url", import.meta.env.VITE_BACKEND_URL)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +19,7 @@ const ArticlesPage = () => {
 
       try {
         const response = await axios.get(
-          `${import.meta.env.BACKEND_URL}/get-articles`,
+          `${import.meta.env.VITE_BACKEND_URL}/get-articles`,
           { params: { date: currDate.format('YYYY-MM-DD') } } // Add currDate as query parameter
         );
         setArticles(response.data.articles);
