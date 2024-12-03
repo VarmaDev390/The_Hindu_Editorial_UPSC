@@ -11,13 +11,14 @@ import {
   Stack,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { formatDate } from '../utils/helper';
 
 // import StarIcon from '@mui/icons-material/Star';
 // import NewReleasesIcon from '@mui/icons-material/NewReleases';
 
 const ArticleCard = ({data}) => {
   const navigate = useNavigate();
-  console.log(data)
+  // console.log(data)
 
   const handleReadArticle = (data) => {
     try {
@@ -70,7 +71,7 @@ const ArticleCard = ({data}) => {
           PROVIDED BY: Schiller-Stroman
         </Typography> */}
         <Typography variant="caption" color="textSecondary">
-          {data.published_date}
+          {formatDate(data.published_date)}
         </Typography>
       </Box>
     </Card>

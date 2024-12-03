@@ -84,6 +84,20 @@ def get_common_words():
     except Exception as e:
         print(f"Error fetching common words: {e}")
         return []
+
+def get_saved_words(userId):
+    try:
+        important_words_entry = Important_words_collection.find_one({"user_id": userId}, {"_id": 0, "vocab":1 })
+        # "words": 1 = wont inlcude _id field in the data and include only words data
+        print("impoeran vocab",important_words_entry )
+        if important_words_entry and "vocab" in important_words_entry:
+            return important_words_entry["vocab"]
+        else:
+            print("No Important vocab found in the collection.")
+            return []
+    except Exception as e:
+        print(f"Error fetching Important vocab: {e}")
+        return []
     
 def add_common_word(new_word):
     try:
@@ -153,6 +167,16 @@ def del_vocab_from_article(word, article_id):
 
     except Exception as e:
         print(f"Error deleting vocabulary word: {e}")
+
+def mark_article(article_id):
+    try:
+        article = articles_collection.update_one({"article_id": article_id},{"$set": {"is_read": True}})
+        print("Updated article successfully.")
+
+        return article
+    
+    except Exception as e:
+        print(f"Error marking the article as read")
 
 def delete_all_articles():
     try:
