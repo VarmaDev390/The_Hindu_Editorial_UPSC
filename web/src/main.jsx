@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ArticlesPage from './pages/articles.jsx'
 import ArticleDetailPage from './pages/articleDetail.jsx';
 import AppContext from './utils/context.jsx';
+import ImportantVocabulary from './pages/savedVocab.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -14,6 +15,7 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         {/* Define Routes for your pages */}
         <Route path="/" element={<ArticlesPage />} />
+        <Route path="/saved_words" element={<ImportantVocabulary/>} />
         <Route path="/article/:id" element={<ArticleDetailPage />} />
       </Routes>
     </Router>

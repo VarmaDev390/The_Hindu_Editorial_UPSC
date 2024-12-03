@@ -1,7 +1,7 @@
 from flask import Blueprint,request,jsonify
 from utils import extract_difficult_vocabulary, convert_utc_to_ist, process_new_articles, fetch_articles_metadata
 import requests
-from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word
+from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word, mark_article, get_saved_words
 from datetime import datetime
 
 
@@ -113,7 +113,7 @@ def get_articles_by_date():
     try:
         # Parse user date to datetime
         user_datetime_IST = datetime.strptime(user_date_str_IST, "%Y-%m-%d")
-        print("user_date", user_datetime_IST)
+        # print("user_date", user_datetime_IST)
 
         # Fetch existing articles from DB
         db_articles = get_all_articles_by_date(user_datetime_IST)
@@ -121,18 +121,25 @@ def get_articles_by_date():
         db_titles = set()
         for article in db_articles:
             db_titles.add(article["title"])
+        print("db_titles",db_titles)
 
         # Fetch metadata from RSS feed
         rss_metadata = fetch_articles_metadata(user_date_str_IST)
+        print("rss_metadata",rss_metadata)
+
 
         # Identify new articles from RSS metadata
         new_articles_metadata = []
         for article in rss_metadata:
             if article["title"] not in db_titles:
                 new_articles_metadata.append(article)
+        print("new_articles_metadata",new_articles_metadata)
 
         # Process and insert new articles
         new_articles = process_new_articles(new_articles_metadata)
+        # new_articles = new_articles_metadata
+        print("new_articles",new_articles)
+
         for article in new_articles:
             insert_article(article)
 
@@ -142,7 +149,7 @@ def get_articles_by_date():
         # Convert published_date to IST for all articles
         for article in all_articles:
             article["published_date"] = convert_utc_to_ist(article["published_date"])
-            print("Article published_date (IST)", article["published_date"])
+            # print("Article published_date (IST)", article["published_date"])
 
         return jsonify({"articles": all_articles}), 200
 
@@ -182,6 +189,25 @@ def delete_vocabulary():
         print(f"Error deleting vocabulary: {e}")
         return jsonify({"error": "An error occurred while deleting Vocabulary."}), 500
 
+@routes.route("/read_article", methods=["POST"])
+def read_article():
+    try:
+        # Get the articleId from the request body (assuming JSON format)
+        data = request.get_json()
+        article_id = data.get('articleId')
+
+        # Get the updated article
+        article = mark_article(article_id)
+
+        # Convert ObjectId to string before serializing
+        article['_id'] = str(article['_id'])
+
+        return jsonify({"article": article}), 200
+    except Exception as e:
+        print(f"Error updating article: {e}")
+        return jsonify({"error": "An error occurred while updating article."}), 500
+
+
 @routes.route("/add-vocab", methods=["POST"])
 def add_vocabulary():
     try:
@@ -197,6 +223,22 @@ def add_vocabulary():
     except Exception as e:
         print(f"Error adding vocabulary: {e}")
         return jsonify({"error": "An error occurred while adding the Vocabulary."}), 500
+    
+@routes.route("/saved-vocab", methods=["POST"])
+def get_vocabulary():
+    try:
+        # Get the word and meaning from the request body (assuming JSON format)
+        data = request.get_json()
+        userId = data.get('userId')
+        print("useriID",userId)
+
+        # Add the word and meaning to important vocabulary
+        words = get_saved_words(userId)
+
+        return jsonify({"words": words}), 200
+    except Exception as e:
+        print(f"Error getting vocabulary: {e}")
+        return jsonify({"error": "An error occurred while getting the Vocabulary."}), 500
 
 @routes.route("/test", methods=["GET"])
 def test():

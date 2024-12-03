@@ -16,9 +16,9 @@ app = Flask(__name__)
 app.register_blueprint(routes)
 
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
-CORS(app, resources={r"/*": {"origins": allowed_origins}})
+# CORS(app, resources={r"/*": {"origins": allowed_origins}})
 
-# CORS(app, origins="http://localhost:5173")
+CORS(app, origins="http://localhost:5173")
 
 
 if __name__ == "__main__":
@@ -26,4 +26,5 @@ if __name__ == "__main__":
     initialize_db()  # Initialize the DB
     port = int(os.getenv("PORT", 5000))  # Default to 5000 if PORT is not set
     app.run(host='0.0.0.0', port=port, debug=True)
+    # app.run(debug=True)
    

@@ -4,6 +4,8 @@ import Layout from '../components/layout';
 import { useSnackbar } from 'notistack';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { formatDate } from '../utils/helper';
+import VocabCard from '../components/vocabCard';
 
 const ArticleDetailPage = () => {
   // Extracting title, summary, and full content from props
@@ -62,7 +64,7 @@ const ArticleDetailPage = () => {
               {article.title}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary" >
-              Published on: {article.published_date}
+              Published on: {formatDate(article.published_date)}
             </Typography>
             <Box sx={{ marginBottom: 2 }}>
               <Typography variant="h6" gutterBottom>
@@ -88,17 +90,18 @@ const ArticleDetailPage = () => {
         </Typography>
         <Box sx={{ marginBottom: 2 }}>
           {article.Vocabulary.map((word, index) => (
-            <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
-              <Typography variant="body1" mr={1}>
-                {word}
-              </Typography>
-              <Button variant="text" size="small" color="error" onClick={() => handleDelete(word)}>
-                Delete
-              </Button>
-              <Button variant="text" size="small" color="primary" onClick={() => handleSave(word)}>
-                Save
-              </Button>
-            </Box>
+            // <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
+            //   <Typography variant="body1" mr={1}>
+            //     {word}
+            //   </Typography>
+            //   <Button variant="text" size="small" color="error" onClick={() => handleDelete(word)}>
+            //     Delete
+            //   </Button>
+            //   <Button variant="text" size="small" color="primary" onClick={() => handleSave(word)}>
+            //     Save
+            //   </Button>
+            // </Box>
+            <VocabCard word={word} meaning={""} onDelete={() => handleDelete(word)} onSave={() => handleSave(word)}/>
           ))}
         </Box>
       </Grid2>
