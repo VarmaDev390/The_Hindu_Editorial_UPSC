@@ -21,6 +21,8 @@ load_dotenv()
 import nltk
 nltk.download('words')
 
+merriam_webster_api_key = os.getenv("MERRIAM_WEBSTER_API_KEY")
+merriam_webster_url = os.getenv("MERRIAM_WEBSTER_URL")
 
 
 # Get the set of English words
@@ -155,6 +157,16 @@ def fetch_articles_metadata(date_str_IST):
 
     return metadata
 
+def fetch_meaning(word):
+        # Call Merriam-Webster API
+    response = requests.get(f"{merriam_webster_url}{word}?key={merriam_webster_api_key}")
+    response_data = response.json()
+
+    if not response_data or isinstance(response_data[0], str):
+        return jsonify({"error": "Meaning not found for the word"}), 404
+
+    meaning = response_data[0].get("shortdef", [])
+    return meaning
 
 def process_new_articles(new_articles_metadata):
     """

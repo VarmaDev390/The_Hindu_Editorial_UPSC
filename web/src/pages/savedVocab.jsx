@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react';
-import { Typography, Grid2, Box, Paper, Button } from '@mui/material';
+import { Typography, Grid2, Box, Paper, Button, Pagination  } from '@mui/material';
 import Layout from '../components/layout';
 import { useSnackbar } from 'notistack';
 import { useLocation } from 'react-router-dom';
@@ -11,6 +11,17 @@ const ImportantVocabulary = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [savedVocab, setSavedVocab] = useState([])
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10; // Number of items per page
+
+      // Calculate the data to display based on the current page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = savedVocab.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,14 +49,25 @@ const ImportantVocabulary = () => {
 
     return(
         <Layout>
+<Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between"}}>
 
-        <Box sx={{ marginBottom: 2 }}>
-          {savedVocab.map((obj, index) => (
 
-            <VocabCard word={obj.word} meaning={""} onDelete={() => []} onSave={() => {}}/>
-          ))}
-        </Box>
-    
+       <Box sx={{ marginBottom: 2 }}>
+        {currentItems.map((obj, index) => (
+          <VocabCard key={index} word={obj.word} meaning={obj.meaning} />
+        ))}
+      </Box>
+
+      {/* Pagination Component */}
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Pagination
+          count={Math.ceil(savedVocab.length / itemsPerPage)}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </Box>
+      </Box>
     </Layout>  
     )
 }

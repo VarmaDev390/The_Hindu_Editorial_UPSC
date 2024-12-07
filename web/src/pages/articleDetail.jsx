@@ -6,6 +6,8 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { formatDate } from '../utils/helper';
 import VocabCard from '../components/vocabCard';
+import Stack from '@mui/material/Stack';
+import VocabChip from '../components/vocabCHip';
 
 const ArticleDetailPage = () => {
   // Extracting title, summary, and full content from props
@@ -60,49 +62,41 @@ const ArticleDetailPage = () => {
       <Grid2 container justifyContent="space-between"  spacing={2}>
         <Grid2  size={{ xs: 12, sm:8, md: 6 }}>
           {/* <Paper  sx={{ padding: 3 }}> */}
-            <Typography variant="h4" gutterBottom align="center">
+            <Typography variant="h4" gutterBottom align="center" sx={{color:"#ffffff"}}>
               {article.title}
             </Typography>
-            <Typography variant="subtitle1" color="textSecondary" >
+            <Typography variant="subtitle1" color="textSecondary" sx={{color:"#ffffff"}}>
               Published on: {formatDate(article.published_date)}
             </Typography>
             <Box sx={{ marginBottom: 2 }}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{color:"#ffffff"}}>
                 Summary
               </Typography>
-              <Typography variant="body1" >
+              <Typography variant="body1"sx={{color:"#ffffff"}} >
                 {article.summary}
               </Typography>
             </Box>
             <Box>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{color:"#ffffff"}}>
                 Full Content
               </Typography>
-              <Typography variant="body1" >
+              <Typography variant="body1" sx={{color:"#ffffff"}}>
                 {article.full_content}
               </Typography>
             </Box>
           {/* </Paper> */}
         </Grid2>
         <Grid2 size={{ xs: 12, sm: 8, md: 6 }}>
-        <Typography variant="h4" gutterBottom align="center">
+        <Typography variant="h4" gutterBottom align="center" sx={{color:"#ffffff"}}>
           Important Vocabulary
         </Typography>
         <Box sx={{ marginBottom: 2 }}>
+        
           {article.Vocabulary.map((word, index) => (
-            // <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
-            //   <Typography variant="body1" mr={1}>
-            //     {word}
-            //   </Typography>
-            //   <Button variant="text" size="small" color="error" onClick={() => handleDelete(word)}>
-            //     Delete
-            //   </Button>
-            //   <Button variant="text" size="small" color="primary" onClick={() => handleSave(word)}>
-            //     Save
-            //   </Button>
-            // </Box>
-            <VocabCard word={word} meaning={""} onDelete={() => handleDelete(word)} onSave={() => handleSave(word)}/>
+
+            <VocabChip word={word} onDelete={() => handleDelete(word)} onSave={() => handleSave(word)}/>
           ))}
+          
         </Box>
       </Grid2>
       </Grid2>

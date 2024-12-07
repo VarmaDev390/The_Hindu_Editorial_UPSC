@@ -51,9 +51,9 @@ const ArticlesPage = () => {
     return (
 
 <Layout>
-  <Typography variant="h4" gutterBottom>
+  {/* <Typography variant="h4" gutterBottom>
     Articles
-  </Typography>
+  </Typography> */}
   
   {loading && (
     <Typography>Please wait, we are summarizing articles...</Typography>
