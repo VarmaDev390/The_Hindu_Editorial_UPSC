@@ -1,5 +1,5 @@
 from flask import Blueprint,request,jsonify
-from utils import extract_difficult_vocabulary, convert_utc_to_ist, process_new_articles, fetch_articles_metadata
+from utils import extract_difficult_vocabulary, convert_utc_to_ist, process_new_articles, fetch_articles_metadata, fetch_meaning
 import requests
 from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word, mark_article, get_saved_words
 from datetime import datetime
@@ -214,7 +214,11 @@ def add_vocabulary():
         # Get the word and meaning from the request body (assuming JSON format)
         data = request.get_json()
         word = data.get('word')
-        meaning = data.get('meaning', '')  # Default meaning to an empty string if not provided
+        # meaning = data.get('meaning', '')  # Default meaning to an empty string if not provided
+
+        # get the meaning for the word
+        meaning = fetch_meaning(word)
+        # print("meaning", meaning)
 
         # Add the word and meaning to important vocabulary
         add_imp_word("ravi",word, meaning)
@@ -223,7 +227,8 @@ def add_vocabulary():
     except Exception as e:
         print(f"Error adding vocabulary: {e}")
         return jsonify({"error": "An error occurred while adding the Vocabulary."}), 500
-    
+
+
 @routes.route("/saved-vocab", methods=["POST"])
 def get_vocabulary():
     try:
