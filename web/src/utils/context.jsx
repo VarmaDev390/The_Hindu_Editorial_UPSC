@@ -6,12 +6,13 @@ export const ContextApp = createContext();
 const AppContext = ({ children }) => {
     const [currDate, setCurrDate] = useState(dayjs());
   const [articles, setArticles] = useState([]);
+  const [userId, setUserId] = useState("")
 
  
     return (
       <ContextApp.Provider
         value={{
-currDate, setCurrDate, articles, setArticles
+currDate, setCurrDate, articles, setArticles, userId, setUserId
         }}
       >
         {children}

@@ -18,6 +18,7 @@ db = client["article_summaries_db"]
 articles_collection = db["articles"]
 common_words_collection = db["common_words"]
 Important_words_collection = db["imp_vocab"]
+users_collection = db["users"]
 
 
 
@@ -34,15 +35,20 @@ def initialize_db():
         db.create_collection("articles")
         print("Created collection named articles")
 
-    # Check if collection already has common words
-    if "common_words" not in db.list_collection_names():
-        common_words_collection.insert_one({"words": initial_common_words})
-        print("Created collection named common_words")
+    # # Check if collection already has common words
+    # if "common_words" not in db.list_collection_names():
+    #     common_words_collection.insert_one({"words": initial_common_words})
+    #     print("Created collection named common_words")
 
-    # Check if imp_vocab collection exists
-    if "imp_vocab" not in db.list_collection_names():
-        db.create_collection("imp_vocab")
-        print("Created collection named imp_vocab")
+    # # Check if imp_vocab collection exists
+    # if "imp_vocab" not in db.list_collection_names():
+    #     db.create_collection("imp_vocab")
+    #     print("Created collection named imp_vocab")
+
+    # Check if users collection exists
+    if "users" not in db.list_collection_names():
+        db.create_collection("users")
+        print("Created collection named users")
 
     print("MongoDB connection initialized")
 

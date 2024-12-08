@@ -31,7 +31,7 @@ const ArticleCard = ({data}) => {
 
 
   return (
-    <Card sx={{ maxWidth: 345, borderRadius: 2, boxShadow: 3 }}>
+    <Card sx={{ maxWidth: 345, borderRadius: 2, boxShadow: 3, cursor: 'pointer' }} onClick={() => handleReadArticle(data)}>
       {/* <CardMedia
         component="img"
         height="140"
@@ -55,17 +55,17 @@ const ArticleCard = ({data}) => {
           {data.title}
         </Typography>
         <Typography variant="body2" color="textSecondary" mt={1}>
-          {data.description}
-          {/* <Typography variant="body2" color="primary" component="span" sx={{ cursor: 'pointer' }}>
+          {data.summary}
+          <Typography variant="body2" color="primary" component="span" sx={{ cursor: 'pointer' }}>
             + Read More
-          </Typography> */}
+          </Typography>
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button variant="contained" color="primary" fullWidth onClick={() => handleReadArticle(data)}>
+      {/* <CardActions>
+        <Button variant="contained" color="primary" fullWidth >
           READ ARTICLE
         </Button>
-      </CardActions>
+      </CardActions> */}
       <Box px={2} py={1} display="flex" justifyContent="space-between" borderTop={1} borderColor="divider">
         {/* <Typography variant="caption" color="textSecondary">
           PROVIDED BY: Schiller-Stroman

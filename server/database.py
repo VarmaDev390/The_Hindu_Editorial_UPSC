@@ -1,5 +1,5 @@
 
-from init_db import db, articles_collection, common_words_collection, Important_words_collection
+from init_db import db, articles_collection, common_words_collection, Important_words_collection, users_collection
 from bson import ObjectId
 from datetime import datetime,timedelta, timezone
 from dateutil import tz
@@ -25,11 +25,11 @@ def get_all_articles():
         print(f"Error fetching articles: {e}")
         return []
 
-def get_all_articles_by_date(datetime_in_IST):
+def get_all_articles_by_date(datetime_in_IST, userId):
     print("get all articles from database")
 
     #moved import inside as database and utils are causing cirucular imports
-    from utils import convert_ist_to_utc, parse_date
+    from utils import convert_ist_to_utc, parse_date, extract_difficult_vocabulary
 
     # print("parsed date_in_ist in get_all_articles_by_date", parse_date(date_in_ist))
 
@@ -55,6 +55,7 @@ def get_all_articles_by_date(datetime_in_IST):
 
         for article in articles:
             article['published_date'] = article['published_date'].replace(tzinfo=timezone.utc)
+            article['Vocabulary'] = extract_difficult_vocabulary(article['full_content'], userId)
 
         print(f"Fetched {len(articles)} articles for date {datetime_in_IST}")
         return articles
@@ -62,19 +63,42 @@ def get_all_articles_by_date(datetime_in_IST):
         print(f"Error fetching articles by date: {e}")
         return []
 
-def get_article_by_id(article_id) :
+def get_article_by_id(article_id, userId) :
+    from utils import extract_difficult_vocabulary
+
     try:
         article = articles_collection.find_one({"article_id":article_id})
+        article_vocabulary = extract_difficult_vocabulary(article['full_content'], userId)
+        article['Vocabulary'] = article_vocabulary
         print(f"Fetched article by {article}")
         return article
     except Exception as e:
         print(f"Error fetching articles: {e}")
         return []
 
-
-def get_common_words():
+def add_user(userId, password):
     try:
-        common_words_entry = common_words_collection.find_one({}, {"_id": 0, "words": 1})
+        user_entry = users_collection.insert_one({ "userId": userId, "password": password }, {"_id": 0} )
+        return { "userId": userId, "password": password }
+    except Exception as e:
+        print(f"Error adding user to database: {e}")
+        return []  
+
+def get_users():
+    try:
+        users_cursor = users_collection.find({}, {"userId": 1, "_id": 0})  # Only return userId field, exclude _id
+        userIds = []
+        for userData in users_cursor:
+            userIds.append(userData["userId"])
+        
+        return userIds
+    except Exception as e:
+        print(f"Error fetching users from database: {e}")
+        return []      
+
+def get_common_words(userId):
+    try:
+        common_words_entry = common_words_collection.find_one({"userId": userId}, {"_id": 0, "words": 1})
         # "words": 1 = wont inlcude _id field in the data and include only words data
         if common_words_entry and "words" in common_words_entry:
             return common_words_entry["words"]
@@ -87,7 +111,7 @@ def get_common_words():
 
 def get_saved_words(userId):
     try:
-        important_words_entry = Important_words_collection.find_one({"user_id": userId}, {"_id": 0, "vocab":1 })
+        important_words_entry = Important_words_collection.find_one({"userId": userId}, {"_id": 0, "vocab":1 })
         # "words": 1 = wont inlcude _id field in the data and include only words data
         print("impoeran vocab",important_words_entry )
         if important_words_entry and "vocab" in important_words_entry:
@@ -99,12 +123,40 @@ def get_saved_words(userId):
         print(f"Error fetching Important vocab: {e}")
         return []
     
-def add_common_word(new_word):
+def add_common_word(new_word, userId):
     try:
-        common_words_collection.update_one({}, {"$addToSet": {"words": {"$each": [new_word]}}}, upsert=True)
+        # Update the document where userId matches, add the new_word to the words array
+        result = common_words_collection.update_one(
+            {"userId": userId},  # Match the userId
+            {"$addToSet": {"words": new_word}},  # Add word only if it doesn't already exist
+            upsert=True  # Insert document if it doesn't exist
+        )
+        
+        if result.modified_count > 0:
+            print("Word added successfully.")
+        elif result.upserted_id:
+            print("New user document created and word added.")
+        else:
+            print("No changes made (word may already exist).")
+    except Exception as e:
+        print(f"Error updating common words: {e}")
+
+
+        # Initial Data
+initial_common_words = [
+    "the", "be", "to", "of", "and", "a", "in", "that", "have", "it", 
+    "you", "he", "with", "on", "do", "at", "by", "this", "but", "from", 
+    "not", "or", "which", "all", "she", "an", "they", "my", "one", "if"
+    # Add more common words as needed...
+]
+
+def initiate_user_common_word(userId):
+    try:
+        common_words_collection.insert_one({"words": initial_common_words, "userId": userId})
         print("Common words updated successfully.")
     except Exception as e:
         print(f"Error updating common words: {e}")
+
 
 # def add_imp_word(word, meaning):
 #     print("word",word)
@@ -125,10 +177,10 @@ def add_common_word(new_word):
 #         else:
 #             print(f"Error updating Important vocab: {e}")
 
-def add_imp_word(user_id, word, meaning):
+def add_imp_word(userId, word, meaning):
     try:
         # Check if the word already exists for the specific user
-        existing_word = Important_words_collection.find_one({"user_id": user_id, "vocab.word": word})
+        existing_word = Important_words_collection.find_one({"userId": userId, "vocab.word": word})
 
         if existing_word:
             print("Word already exists in the user's vocabulary")
@@ -136,7 +188,7 @@ def add_imp_word(user_id, word, meaning):
 
         # Add the word if it doesn't exist
         Important_words_collection.update_one(
-            {"user_id": user_id},
+            {"userId": userId},
             {"$addToSet": {"vocab": {"word": word, "meaning": meaning}}},
             upsert=True
         )
@@ -145,7 +197,7 @@ def add_imp_word(user_id, word, meaning):
     except Exception as e:
         print(f"Error updating Important vocab: {e}")
 
-def del_vocab_from_article(word, article_id):
+def del_vocab_from_article(word, article_id, userId):
     try:
         article = articles_collection.find_one({"article_id": article_id})
 
