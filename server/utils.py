@@ -27,12 +27,12 @@ merriam_webster_url = os.getenv("MERRIAM_WEBSTER_URL")
 
 # Get the set of English words
 english_words = set(nltk_words.words())
-def extract_difficult_vocabulary(text):
+def extract_difficult_vocabulary(text, userId):
     # Tokenize and clean the text
     words = re.findall(r'\b\w+\b', text.lower())
     
     # Filter out common words and consider words only in English dictionary
-    common_words= get_common_words()
+    common_words= get_common_words(userId)
     difficult_words = [word for word in words 
                        if word not in common_words 
                        and word in english_words 
@@ -168,7 +168,7 @@ def fetch_meaning(word):
     meaning = response_data[0].get("shortdef", [])
     return meaning
 
-def process_new_articles(new_articles_metadata):
+def process_new_articles(new_articles_metadata, userId):
     """
     Process new articles by fetching content, summarizing, and extracting vocabulary.
     """
@@ -176,7 +176,7 @@ def process_new_articles(new_articles_metadata):
     for article_meta in new_articles_metadata:
         article_content = fetch_full_article_content(article_meta["link"])
         article_summary = summarize_article(article_content)
-        article_vocabulary = extract_difficult_vocabulary(article_content)
+        article_vocabulary = extract_difficult_vocabulary(article_content, userId)
 
         processed_article = {
             "title": article_meta["title"],

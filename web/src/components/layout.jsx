@@ -101,7 +101,7 @@ function Layout({ children }) {
 
   
   const handleDateChange = (newDate) => {
-    setArticles([])
+      setArticles([])
       setCurrDate(newDate);
       navigate("/");
     };
@@ -257,11 +257,30 @@ function Layout({ children }) {
             minDate={dayjs('2024-11-09')}
             maxDate={dayjs()}
             sx={{
-              '& .MuiInputBase-root': { backgroundColor: 'white' },
-              '& .MuiInputLabel-root': { color: '#333' },
-              '& .MuiOutlinedInput-root': { borderColor: '#ccc' }
+              '& .MuiInputBase-root': {
+                backgroundColor: '#fefae0',
+                fontSize: '1rem', // Reduce font size
+                height: '40px', // Adjust input height
+                minHeight: 'unset', // Ensure no min height conflicts
+                width: "165px"
+              },
+              '& .MuiInputLabel-root': {
+                color: 'black',
+                fontSize: '1rem', // Reduce label font size
+              },
+              '& .MuiOutlinedInput-root': {
+                borderColor: '#ccc',
+                padding: '0 0px', // Reduce padding
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderRadius: '4px', // Adjust border radius if needed
+              },
+              '& .Mui-focused .MuiInputLabel-root': {
+                color: 'white',
+              },
             }}
-            onChange={handleDateChange}
+            onChange={() => {}}
+            onAccept={handleDateChange}
           />
         </LocalizationProvider>
           </Box>

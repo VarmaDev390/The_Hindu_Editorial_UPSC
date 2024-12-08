@@ -1,7 +1,7 @@
 from flask import Blueprint,request,jsonify
 from utils import extract_difficult_vocabulary, convert_utc_to_ist, process_new_articles, fetch_articles_metadata, fetch_meaning
 import requests
-from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word, mark_article, get_saved_words
+from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word, mark_article, get_saved_words, add_user, get_users, initiate_user_common_word
 from datetime import datetime
 
 
@@ -103,9 +103,28 @@ routes = Blueprint("routes", __name__)
 #         print(f"Error fetching articles: {e}")
 #         return jsonify({"error": "An error occurred while fetching articles."}), 500
 
+@routes.route("/add-user", methods=["POST"])
+def add_user_route():
+    try:
+        data = request.get_json()
+        userId = data.get('userId')
+        password = data.get('password')
+
+        user_data = add_user(userId,password)
+
+        initiate_user_common_word(userId)
+
+        print("userData", user_data)
+
+        return jsonify({"data": user_data}), 200
+    except Exception as e:
+        print(f"Error adding user: {e}")
+        return jsonify({"error": "An error occurred while adding user."}), 500
+
 @routes.route("/get-articles", methods=["GET"])
 def get_articles_by_date():
     user_date_str_IST = request.args.get("date")
+    userId = request.args.get("userId")
     
     if not user_date_str_IST:
         return jsonify({"error": "Please provide a date in YYYY-MM-DD format."}), 400
@@ -116,7 +135,7 @@ def get_articles_by_date():
         # print("user_date", user_datetime_IST)
 
         # Fetch existing articles from DB
-        db_articles = get_all_articles_by_date(user_datetime_IST)
+        db_articles = get_all_articles_by_date(user_datetime_IST, userId)
         # create a set conataing article titles
         db_titles = set()
         for article in db_articles:
@@ -136,7 +155,7 @@ def get_articles_by_date():
         print("new_articles_metadata",new_articles_metadata)
 
         # Process and insert new articles
-        new_articles = process_new_articles(new_articles_metadata)
+        new_articles = process_new_articles(new_articles_metadata, userId)
         # new_articles = new_articles_metadata
         print("new_articles",new_articles)
 
@@ -160,6 +179,16 @@ def get_articles_by_date():
         return jsonify({"error": "An error occurred while fetching articles."}), 500
 
 
+@routes.route("/get-users", methods=["GET"])
+def get_users_route():
+    try:
+        users = get_users()
+
+        return jsonify({"users": users}), 200
+    except Exception as e:
+        print(f"Error fetching users: {e}")
+        return jsonify({"error": "An error occurred while fetching users."}), 500
+    
 @routes.route("/delete-vocab", methods=["POST"])
 def delete_vocabulary():
     try:
@@ -167,19 +196,21 @@ def delete_vocabulary():
         data = request.get_json()
         word = data.get('word')
         article_id = data.get('articleId')
+        userId = data.get('userId')
 
         # Validate the input
         if not word or not article_id:
             return jsonify({"error": "Missing word or articleId"}), 400
 
         # Add the word to common words
-        add_common_word(word)
+        add_common_word(word, userId)
 
-        # Delete the vocab from the article
-        del_vocab_from_article(word, article_id)
+        # # Delete the vocab from the article
+        # del_vocab_from_article(word, article_id, userId)
 
         # Get the updated article
-        article = get_article_by_id(article_id)
+        article = get_article_by_id(article_id, userId)
+        print("article after delet",article["Vocabulary"])
 
         # Convert ObjectId to string before serializing
         article['_id'] = str(article['_id'])
@@ -214,6 +245,7 @@ def add_vocabulary():
         # Get the word and meaning from the request body (assuming JSON format)
         data = request.get_json()
         word = data.get('word')
+        userId = data.get('userId')
         # meaning = data.get('meaning', '')  # Default meaning to an empty string if not provided
 
         # get the meaning for the word
@@ -221,7 +253,7 @@ def add_vocabulary():
         # print("meaning", meaning)
 
         # Add the word and meaning to important vocabulary
-        add_imp_word("ravi",word, meaning)
+        add_imp_word(userId,word, meaning)
 
         return jsonify({"message": "Word and meaning added successfully"}), 200
     except Exception as e:

@@ -1,10 +1,12 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState, useEffect, useContext} from 'react';
 import { Typography, Grid2, Box, Paper, Button, Pagination  } from '@mui/material';
 import Layout from '../components/layout';
 import { useSnackbar } from 'notistack';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import VocabCard from '../components/vocabCard';
+import { ContextApp } from '../utils/context';
+
 
 const ImportantVocabulary = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -12,6 +14,8 @@ const ImportantVocabulary = () => {
     const [error, setError] = useState(null);
     const [savedVocab, setSavedVocab] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
+  const {  userId, articles, setArticles} = useContext(ContextApp)
+
     const itemsPerPage = 10; // Number of items per page
 
       // Calculate the data to display based on the current page
@@ -31,7 +35,7 @@ const ImportantVocabulary = () => {
             try {
                 const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/saved-vocab`, {
                     
-                    userId: "ravi"
+                    userId:userId 
                   });
                   console.log("response",response.data.words)
                   setSavedVocab(response.data.words);

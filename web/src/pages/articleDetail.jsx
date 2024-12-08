@@ -8,12 +8,14 @@ import { formatDate } from '../utils/helper';
 import VocabCard from '../components/vocabCard';
 import Stack from '@mui/material/Stack';
 import VocabChip from '../components/vocabCHip';
+import { ContextApp } from '../utils/context';
 
 const ArticleDetailPage = () => {
   // Extracting title, summary, and full content from props
   const location = useLocation();
   const [article, setArticle] = useState(location.state?.article)
   // const { title, summary, full_content, published_date, Vocabulary, article_id } = location.state?.article;
+  const {  userId, articles, setArticles} = useContext(ContextApp)
   const { enqueueSnackbar } = useSnackbar();
 
 
@@ -21,11 +23,19 @@ const ArticleDetailPage = () => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/delete-vocab`, {
         word: word,
-        articleId: article.article_id
+        articleId: article.article_id, 
+        userId: userId 
       });
   
       console.log("response", response.data);
       setArticle(response.data.article);
+
+      // Update the articles array in the context
+      setArticles((prevArticles) =>
+        prevArticles.map((art) =>
+          art.article_id === response.data.article.article_id ? response.data.article : art
+        )
+      );
   
       if (response.status !== 200) {
         throw new Error('Failed to delete vocabulary word');
@@ -47,6 +57,7 @@ const ArticleDetailPage = () => {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/add-vocab`, {
         word,
         meaning, // Include meaning if required by your backend
+        userId: userId 
       });
   
       enqueueSnackbar('Word added successfully!', { variant: 'success' });
@@ -91,13 +102,18 @@ const ArticleDetailPage = () => {
           Important Vocabulary
         </Typography>
         <Box sx={{ marginBottom: 2 }}>
-        
-          {article.Vocabulary.map((word, index) => (
-
-            <VocabChip word={word} onDelete={() => handleDelete(word)} onSave={() => handleSave(word)}/>
-          ))}
-          
-        </Box>
+    <Grid2 container spacing={2} justifyContent="center">
+      {article.Vocabulary.map((word, index) => (
+        <Grid2 size={{ xs: 12, sm: 4}}>
+          <VocabChip
+            word={word}
+            onDelete={() => handleDelete(word)}
+            onSave={() => handleSave(word)}
+          />
+        </Grid2>
+      ))}
+    </Grid2>
+  </Box>
       </Grid2>
       </Grid2>
     </Layout>
