@@ -16,9 +16,9 @@ app = Flask(__name__)
 app.register_blueprint(routes)
 
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
-# CORS(app, resources={r"/*": {"origins": allowed_origins}})
+CORS(app, resources={r"/*": {"origins": allowed_origins}})
 
-CORS(app, origins="http://localhost:5173")
+# CORS(app, origins="http://localhost:5173")
 
 
 if __name__ == "__main__":
