@@ -209,106 +209,85 @@ const ArticlesPage = () => {
     return (
 
 
-<Layout>
-  {/* <Typography variant="h4" gutterBottom>
-    Articles
-  </Typography> */}
-  
-  {loading && (
-    <Box
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      height: "100vh",
-    }}
-  >
-    {/* <img
-      src="https://giphy.com/gifs/perfect-loops-17mNCcKU1mJlrbXodo" // Replace with your no-copyright GIF URL
-      alt="Loading..."
-      style={{ width: "150px", height: "150px" }}
-    /> */}
-    <Typography variant="h6" sx={{ marginTop: 2, color:"#ffffff" }}>
-      Please wait, we are summarizing articles...
-    </Typography>
-  </Box>
-  )}
+      <Layout>
+      <Box
+        sx={{
+          display: openDialog ? 'none' : 'block',
+          filter: openDialog ? 'blur(15px)' : 'none', // Blur background when dialog is open
+        }}
+      >
+        {loading && (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mt:20
+            }}
+          >
+            <Typography variant="h6" sx={{ marginTop: 2, color: '#ffffff' }}>
+              Please wait, we are summarizing articles for you...
+            </Typography>
+          </Box>
+        )}
 
-  {!loading && error && (
-    <Typography color="error">{error}</Typography>
-  )}
+        {!loading && error && <Typography color="error">{error}</Typography>}
 
-  {!loading && !error && articles.length > 0 && (
-    <Grid2 container spacing={3} sx={{mb:3}}>
-      {articles.map((article, index) => (
-        <Grid2 size={{ xs: 12, sm:6, md: 4 }} key={index}>
-          <ArticleCard data={article} />
-        </Grid2>
-      ))}
-    </Grid2>
-  )}
+        {!loading && !error && articles.length > 0 && userId && (
+          <Grid2 container spacing={3} sx={{ mb: 3 }}>
+            {articles.map((article, index) => (
+              <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={index}>
+                <ArticleCard data={article} />
+              </Grid2>
+            ))}
+          </Grid2>
+        )}
 
-  {!loading && !error && articles.length === 0 && (
-     <Box
-     sx={{
-       display: "flex",
-       flexDirection: "column",
-       alignItems: "center",
-       justifyContent: "center",
-       height: "100vh",
-     }}
-   >
-     {/* <img
-       src="https://via.placeholder.com/300" // Replace with your chosen no-copyright image URL
-       alt="No articles found"
-       style={{ width: "300px", height: "300px" }}
-     /> */}
-     <Typography variant="h6" sx={{ marginTop: 2, color:"#ffffff" }}>
-       No articles found for the selected date.
-     </Typography>
-   </Box>
-  )}
+        {!loading && !error && articles.length === 0 && (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mt: 20
+            }}
+          >
+            <Typography variant="h6" sx={{ marginTop: 2, color: '#ffffff' }}>
+              No articles found for the selected date, choose another date
+            </Typography>
+          </Box>
+        )}
+      </Box>
 
-        {/* User ID Dialog */}
-        {/* <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Enter Unique User Name</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="User ID"
-            fullWidth
-            variant="outlined"
-            value={newUserId}
-            onChange={(e) => setNewUserId(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSaveUserId} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog> */}
-       <Dialog sx={{
-          "& .MuiPaper-root": {
-            borderRadius: "16px", // Adjust the border radius here
+      {/* User ID Dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={(event, reason) => {
+          // Prevent dialog from closing unless explicitly closed programmatically
+          if (reason !== 'backdropClick' && reason !== 'escapeKeyDown') {
+            setOpenDialog(false);
+          }
+        }}
+        disableEscapeKeyDown
+        sx={{
+          '& .MuiPaper-root': {
+            borderRadius: '16px',
+            width: { xs: '90%', sm: '60%', md: '50%' }, // Set dialog size for different screen sizes
           },
-        }}  open={openDialog} onClose={(event, reason) => {
-    // Prevent dialog from closing unless explicitly closed programmatically
-    if (reason !== "backdropClick" && reason !== "escapeKeyDown") {
-      setOpenDialog(false);
-    }
-  }}
-  disableEscapeKeyDown>
+        }}
+      >
         {renderDialogContent()}
       </Dialog>
-</Layout>
+    </Layout>
 
     )
 }
 
-export default ArticlesPage
+
+
+
+export default ArticlesPage;
+
+

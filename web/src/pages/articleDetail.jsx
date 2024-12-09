@@ -90,7 +90,7 @@ const itemsPerPage = isSmallScreen ? 15 : isMediumScreen ? 25 : 35;
 
   return (
     <Layout>
-      <Grid2 container justifyContent="space-between"  spacing={2}>
+      <Grid2 container justifyContent="space-between"  spacing={2} sx={{mb:2}}>
         <Grid2  size={{ xs: 12, sm:12, md: 6 }}>
           {/* <Paper  sx={{ padding: 3 }}> */}
             <Typography variant="h4" gutterBottom align="center" sx={{color:"#ffffff"}}>
