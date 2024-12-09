@@ -7,7 +7,7 @@ import axios from 'axios';
 import { formatDate } from '../utils/helper';
 import VocabCard from '../components/vocabCard';
 import Stack from '@mui/material/Stack';
-import VocabChip from '../components/vocabCHip';
+import VocabChip from '../components/vocabChip';
 import { ContextApp } from '../utils/context';
 
 const ArticleDetailPage = () => {
