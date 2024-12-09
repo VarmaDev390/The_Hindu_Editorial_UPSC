@@ -195,7 +195,7 @@ const ArticlesPage = () => {
             </DialogContent>
             <DialogActions sx={styles.actionStyle}>
               <Button sx={styles.buttonStyle} onClick={() => setDialogStep("choose")}>Back</Button>
-              <Button sx={styles.buttonStyle} onClick={handleSaveUserId}>Save</Button>
+              <Button sx={styles.buttonStyle} onClick={handleUserCreation}>Save</Button>
             </DialogActions>
           </>
         );
