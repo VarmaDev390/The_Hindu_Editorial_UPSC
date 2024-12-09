@@ -50,9 +50,17 @@ const About = () => {
           <Typography variant="h6" gutterBottom>
             How to Use:
           </Typography>
-          <Typography variant="body1" paragraph>
+          <Typography variant="body1" >
             - Simply navigate through articles, explore summaries, and take note of challenging words. 
+      
+          </Typography>
+          <Typography variant="body1" >
+       
             - Save any words you wish to review later, and feel free to delete any words from your vocabulary list.
+           
+          </Typography>
+          <Typography variant="body1" >
+           
             - You can filter articles by date to find content from specific days.
           </Typography>
           {/* <Button
