@@ -34,7 +34,21 @@ const styles= {
   actionStyle: {
      gap: 1.5, paddingBottom: 2, paddingRight: 3
   }
- 
+ loadingStyle: {
+
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      zIndex: 1500,
+    }
+ }
   
 }
 
@@ -239,15 +253,9 @@ const ArticlesPage = () => {
       >
         {loading && (
           <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mt:20
-            }}
+          sx={styles.loading}
           >
-            <Typography variant="h6" sx={{ marginTop: 2, color: '#ffffff' }}>
+            <Typography variant="h6" sx={{ color: '#ffffff' }}>
               Please wait, we are summarizing articles for you...
             </Typography>
           </Box>
@@ -255,19 +263,7 @@ const ArticlesPage = () => {
 
 {isCreatingUser && (
   <Box
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      zIndex: 1500,
-    }}
+    sx={styles.loading}
   >
     <Typography variant="h6" sx={{ color: '#ffffff' }}>
       Creating user, please wait...
@@ -289,15 +285,9 @@ const ArticlesPage = () => {
 
         {!loading && !error && articles.length === 0 && (
           <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mt: 20
-            }}
+          sx={styles.loading}
           >
-            <Typography variant="h6" sx={{ marginTop: 2, color: '#ffffff' }}>
+            <Typography variant="h6" sx={{ color: '#ffffff' }}>
               No articles found for the selected date, choose another date
             </Typography>
           </Box>

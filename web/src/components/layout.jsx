@@ -72,7 +72,7 @@ import React, { useState, useContext } from "react";
 import MenuIcon from '@mui/icons-material/Menu';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import { Grid2,MenuItem,Avatar,Container,Menu,Typography,IconButton,Toolbar,Box,AppBar ,Button, Link} from "@mui/material";
+import { Grid2,MenuItem,Avatar,Container,Menu,Typography,IconButton,Toolbar,Box,AppBar ,Button, Link, Tooltip, Stack} from "@mui/material";
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate  } from 'react-router-dom'
 import { DatePicker } from '@mui/x-date-pickers';
@@ -182,6 +182,8 @@ function Layout({ children }) {
             Editorials
           </Typography>
 
+   
+
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -209,7 +211,12 @@ function Layout({ children }) {
               onClose={handleCloseNavMenu}
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
-              
+                       <MenuItem onClick={() =>  {
+            handleCloseNavMenu()
+            navigate("/")
+          } }>
+                  <Typography sx={{ textAlign: 'center' }}>Editorials</Typography>
+                </MenuItem>
                 <MenuItem onClick={() =>  {
             handleCloseNavMenu()
             navigate("/saved_words")
@@ -228,7 +235,7 @@ function Layout({ children }) {
           {/*web */}
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
-          <Typography
+          {/* <Typography
             variant="h5"
             noWrap
             component="a"
@@ -245,7 +252,16 @@ function Layout({ children }) {
             }}
           >
             Editorials
-          </Typography>
+          </Typography> */}
+                    <Box
+      component="img"
+      sx={{
+        height: 40,
+        marginRight: 2, // Adds space to the right of the logo
+      }}
+      alt="Logo"
+      src="/logo.png"
+    />
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, marginLeft: 5 }}>
            
               <Button
@@ -274,45 +290,48 @@ function Layout({ children }) {
        
           </Box>
           <Box sx={{ flexGrow: 0 }}>
-            {/* <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu> */}
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <MobileDatePicker
-            label="Pick Articles By Date"
-            defaultValue={currDate}
-            minDate={dayjs('2024-11-09')}
-            maxDate={dayjs()}
-            sx={styles.datePickerStyle}
-            onChange={() => {}}
-            onAccept={handleDateChange}
-          />
-        </LocalizationProvider>
-          </Box>
+  <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <Stack direction="row" spacing={2} alignItems="center">
+      <MobileDatePicker
+        label="Pick Articles By Date"
+        defaultValue={currDate}
+        minDate={dayjs('2024-11-09')}
+        maxDate={dayjs()}
+        sx={styles.datePickerStyle}
+        onChange={() => {}}
+        onAccept={handleDateChange}
+      />
+      <Tooltip title="Open settings">
+        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+          <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+        </IconButton>
+      </Tooltip>
+    </Stack>
+  </LocalizationProvider>
+  <Menu
+    sx={{ mt: '45px' }}
+    id="menu-appbar"
+    anchorEl={anchorElUser}
+    anchorOrigin={{
+      vertical: 'top',
+      horizontal: 'right',
+    }}
+    keepMounted
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'right',
+    }}
+    open={Boolean(anchorElUser)}
+    onClose={handleCloseUserMenu}
+  >
+    {settings.map((setting) => (
+      <MenuItem key={setting} onClick={handleCloseUserMenu}>
+        <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+      </MenuItem>
+    ))}
+  </Menu>
+</Box>
+
           </Box>
         </Toolbar>
       </Container>
