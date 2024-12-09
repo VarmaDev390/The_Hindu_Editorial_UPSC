@@ -24,6 +24,10 @@ nltk.download('words')
 merriam_webster_api_key = os.getenv("MERRIAM_WEBSTER_API_KEY")
 merriam_webster_url = os.getenv("MERRIAM_WEBSTER_URL")
 
+oxford_app_id= os.getenv("OXFORD_APP_ID")
+oxford_app_key = os.getenv("OXFORD_APP_KEY")
+oxford_url = os.getenv("OXFORD_URL")
+
 
 # Get the set of English words
 english_words = set(nltk_words.words())
@@ -157,7 +161,7 @@ def fetch_articles_metadata(date_str_IST):
 
     return metadata
 
-def fetch_meaning(word):
+def fetch_meaning_merriam_webster(word):
         # Call Merriam-Webster API
     response = requests.get(f"{merriam_webster_url}{word}?key={merriam_webster_api_key}")
     response_data = response.json()
@@ -166,6 +170,20 @@ def fetch_meaning(word):
         return jsonify({"error": "Meaning not found for the word"}), 404
 
     meaning = response_data[0].get("shortdef", [])
+    return meaning
+
+def fetch_meaning_Oxford(word):
+        # Call Merriam-Webster API
+    print("util Logger: Inside fetch_meaning_Oxford")
+    response = requests.get(f"{oxford_url}{word.lower()}", headers={"app_id": oxford_app_id, "app_key": oxford_app_key})
+   
+    response_data = response.json()
+
+    if "error" in response_data:
+            return jsonify({"error": "Meaning not found for the word"}), 404
+
+    meaning = response_data["results"][0]["lexicalEntries"][0]["entries"][0]["senses"][0]["definitions"]
+    print("meainig", meaning)
     return meaning
 
 def process_new_articles(new_articles_metadata, userId):

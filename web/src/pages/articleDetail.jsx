@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Typography, Grid2, Box, Paper, Button } from '@mui/material';
+import { Typography, Grid2, Box, Paper, Button, Pagination , useTheme, useMediaQuery} from '@mui/material';
 import Layout from '../components/layout';
 import { useSnackbar } from 'notistack';
 import { useLocation } from 'react-router-dom';
@@ -17,6 +17,26 @@ const ArticleDetailPage = () => {
   // const { title, summary, full_content, published_date, Vocabulary, article_id } = location.state?.article;
   const {  userId, articles, setArticles} = useContext(ContextApp)
   const { enqueueSnackbar } = useSnackbar();
+  const [currentPage, setCurrentPage] = useState(1);
+  const theme = useTheme();
+
+// Check if the screen is at least `sm` (small screen) or `md` (medium screen)
+const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm')); // Small or below (xs)
+const isMediumScreen = useMediaQuery(theme.breakpoints.between('sm', 'md')); // sm to md
+
+// Dynamically adjust itemsPerPage based on screen size
+const itemsPerPage = isSmallScreen ? 15 : isMediumScreen ? 25 : 35; 
+
+  // Handle page change
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  // Paginate the Vocabulary array
+  const paginatedVocabulary = article.Vocabulary.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
 
   const handleDelete = async (word) => {
@@ -71,7 +91,7 @@ const ArticleDetailPage = () => {
   return (
     <Layout>
       <Grid2 container justifyContent="space-between"  spacing={2}>
-        <Grid2  size={{ xs: 12, sm:8, md: 6 }}>
+        <Grid2  size={{ xs: 12, sm:12, md: 6 }}>
           {/* <Paper  sx={{ padding: 3 }}> */}
             <Typography variant="h4" gutterBottom align="center" sx={{color:"#ffffff"}}>
               {article.title}
@@ -97,23 +117,38 @@ const ArticleDetailPage = () => {
             </Box>
           {/* </Paper> */}
         </Grid2>
-        <Grid2 size={{ xs: 12, sm: 8, md: 6 }}>
+        <Grid2 size={{ xs: 12, sm: 12, md: 6 }}>
         <Typography variant="h4" gutterBottom align="center" sx={{color:"#ffffff"}}>
           Important Vocabulary
         </Typography>
-        <Box sx={{ marginBottom: 2 }}>
-    <Grid2 container spacing={2} justifyContent="center">
-      {article.Vocabulary.map((word, index) => (
-        <Grid2 size={{ xs: 12, sm: 4}}>
-          <VocabChip
-            word={word}
-            onDelete={() => handleDelete(word)}
-            onSave={() => handleSave(word)}
-          />
-        </Grid2>
-      ))}
-    </Grid2>
-  </Box>
+        <Paper sx={{ padding: 2, marginBottom: 2, backgroundColor: "inherit" }}>
+            <Grid2 container spacing={2} justifyContent="center">
+              {paginatedVocabulary.map((word, index) => (
+                <Grid2 sx={{xs:12, sm:4}} key={index}>
+                  <VocabChip
+                    word={word}
+                    onDelete={() => handleDelete(word)}
+                    onSave={() => handleSave(word)}
+                  />
+                </Grid2>
+              ))}
+            </Grid2>
+          </Paper>
+
+          {/* Pagination Component */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, mb:2 }}>
+            <Pagination
+              count={Math.ceil(article.Vocabulary.length / itemsPerPage)}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+              sx={{
+                '& .MuiPaginationItem-root': {
+                  color: 'white',
+                },
+              }}
+            />
+          </Box>
       </Grid2>
       </Grid2>
     </Layout>
