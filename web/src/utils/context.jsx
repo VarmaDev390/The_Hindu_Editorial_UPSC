@@ -6,8 +6,16 @@ export const ContextApp = createContext();
 const AppContext = ({ children }) => {
     const [currDate, setCurrDate] = useState(dayjs());
   const [articles, setArticles] = useState([]);
-  const [userId, setUserId] = useState("")
-
+  const [userId, setUserId] = useState(() => {
+  
+    return localStorage.getItem('userId') || null;
+  });
+  useEffect(() => {
+    if (userId) {
+      
+      localStorage.setItem('userId', userId);
+    }
+  }, [userId]);
  
     return (
       <ContextApp.Provider

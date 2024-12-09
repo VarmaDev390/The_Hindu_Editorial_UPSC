@@ -30,7 +30,7 @@ const ImportantVocabulary = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true); // Set loading state
-            // console.log("iside fetch");
+            console.log("iside fetch", userId);
       
             try {
                 const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/saved-vocab`, {

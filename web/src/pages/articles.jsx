@@ -4,6 +4,8 @@ import Layout from '../components/layout';
 import { Typography, Grid2, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField ,Box } from '@mui/material';
 import ArticleCard from '../components/articleCard';
 import { ContextApp } from '../utils/context';
+import { useSnackbar } from 'notistack';
+
 
 const styles= {
   buttonStyle:{
@@ -46,6 +48,8 @@ const ArticlesPage = () => {
   const [newUserId, setNewUserId] = useState("");
   const [existingUserId, setExistingUserId] = useState("");
   const [userExists, setUserExists] = useState(false);
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
   // console.log("url", import.meta.env.VITE_BACKEND_URL)
 
   // const articlesCache = useRef({});
@@ -99,6 +103,7 @@ const ArticlesPage = () => {
         if (existingUserIds.includes(newUserId)) {
           // If the userId already exists, show error message
           setUserExists(true);
+          enqueueSnackbar(`User already exists`, { variant: 'error' });
           // alert("User already exists");
         } else {
          
@@ -112,7 +117,8 @@ const ArticlesPage = () => {
            localStorage.setItem("userId", newUserId); // Save userId to localStorage
            setOpenDialog(false);
            setUserExists(false);
-           alert("New user created");
+           enqueueSnackbar(`New user created`, { variant: 'success' }); 
+           
         }
       } catch (error) {
         console.error("Error verifying user ID uniqueness", error);
@@ -123,12 +129,27 @@ const ArticlesPage = () => {
     }
   };
 
+  const handleUserCreation = async () => {
+    setIsCreatingUser(true); // Start loading
+    setOpenDialog(false)
+    try {
+      await handleSaveUserId(); // Replace with your user creation logic
+      // Additional success handling
+    } catch (error) {
+      console.error('Error creating user:', error);
+    } finally {
+      setIsCreatingUser(false); // Stop loading
+    }
+  };
+
   const handleExistingUserSave = () => {
     if (existingUserId.trim()) {
       // Directly set the existing userId
       setUserId(existingUserId);
       localStorage.setItem("userId", existingUserId); // Save userId to localStorage
       setOpenDialog(false);
+      enqueueSnackbar(`Successfully loggedIn`, { variant: 'success' }); 
+           
     } else {
       alert("Please enter a valid user ID.");
     }
@@ -231,6 +252,28 @@ const ArticlesPage = () => {
             </Typography>
           </Box>
         )}
+
+{isCreatingUser && (
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      zIndex: 1500,
+    }}
+  >
+    <Typography variant="h6" sx={{ color: '#ffffff' }}>
+      Creating user, please wait...
+    </Typography>
+  </Box>
+)}
 
         {!loading && error && <Typography color="error">{error}</Typography>}
 

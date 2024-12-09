@@ -8,9 +8,23 @@ import ArticleDetailPage from './pages/articleDetail.jsx';
 import AppContext from './utils/context.jsx';
 import ImportantVocabulary from './pages/savedVocab.jsx';
 import About from './pages/about.jsx';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+// const theme = createTheme({
+//   components: {
+//     MuiSnackbarContent: {
+//       styleOverrides: {
+//         root: {
+//           backgroundColor: 'red', // Customize globally
+//         },
+//       },
+//     },
+//   },
+// });
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    {/* <ThemeProvider theme={theme}> */}
     <SnackbarProvider maxSnack={3} anchorOrigin={{
         vertical: 'top',   
         horizontal: 'right' 
@@ -29,5 +43,6 @@ createRoot(document.getElementById('root')).render(
     </Router>
     </AppContext>
     </SnackbarProvider>
+    {/* </ThemeProvider> */}
   </StrictMode>,
 )
