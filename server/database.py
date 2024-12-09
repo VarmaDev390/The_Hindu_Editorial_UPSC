@@ -178,6 +178,8 @@ def initiate_user_common_word(userId):
 #             print(f"Error updating Important vocab: {e}")
 
 def add_imp_word(userId, word, meaning):
+    print("database Logger: Inside add_imp_word")
+
     try:
         # Check if the word already exists for the specific user
         existing_word = Important_words_collection.find_one({"userId": userId, "vocab.word": word})

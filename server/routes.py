@@ -1,5 +1,5 @@
 from flask import Blueprint,request,jsonify
-from utils import extract_difficult_vocabulary, convert_utc_to_ist, process_new_articles, fetch_articles_metadata, fetch_meaning
+from utils import extract_difficult_vocabulary, convert_utc_to_ist, process_new_articles, fetch_articles_metadata, fetch_meaning_merriam_webster, fetch_meaning_Oxford
 import requests
 from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word, mark_article, get_saved_words, add_user, get_users, initiate_user_common_word
 from datetime import datetime
@@ -105,6 +105,8 @@ routes = Blueprint("routes", __name__)
 
 @routes.route("/add-user", methods=["POST"])
 def add_user_route():
+    print("Route Logger: Inside add-user route")
+
     try:
         data = request.get_json()
         userId = data.get('userId')
@@ -123,6 +125,7 @@ def add_user_route():
 
 @routes.route("/get-articles", methods=["GET"])
 def get_articles_by_date():
+    print("Route Logger: Inside get-articles route")
     user_date_str_IST = request.args.get("date")
     userId = request.args.get("userId")
     
@@ -140,11 +143,11 @@ def get_articles_by_date():
         db_titles = set()
         for article in db_articles:
             db_titles.add(article["title"])
-        print("db_titles",db_titles)
+        # print("db_titles",db_titles)
 
         # Fetch metadata from RSS feed
         rss_metadata = fetch_articles_metadata(user_date_str_IST)
-        print("rss_metadata",rss_metadata)
+        # print("rss_metadata",rss_metadata)
 
 
         # Identify new articles from RSS metadata
@@ -152,12 +155,12 @@ def get_articles_by_date():
         for article in rss_metadata:
             if article["title"] not in db_titles:
                 new_articles_metadata.append(article)
-        print("new_articles_metadata",new_articles_metadata)
+        # print("new_articles_metadata",new_articles_metadata)
 
         # Process and insert new articles
         new_articles = process_new_articles(new_articles_metadata, userId)
         # new_articles = new_articles_metadata
-        print("new_articles",new_articles)
+        # print("new_articles",new_articles)
 
         for article in new_articles:
             insert_article(article)
@@ -181,6 +184,8 @@ def get_articles_by_date():
 
 @routes.route("/get-users", methods=["GET"])
 def get_users_route():
+    print("Logger: Inside get-users route")
+
     try:
         users = get_users()
 
@@ -191,6 +196,8 @@ def get_users_route():
     
 @routes.route("/delete-vocab", methods=["POST"])
 def delete_vocabulary():
+    print("Route Logger: Inside delete-vocab route")
+
     try:
         # Get the word from the request body (assuming JSON format)
         data = request.get_json()
@@ -210,7 +217,7 @@ def delete_vocabulary():
 
         # Get the updated article
         article = get_article_by_id(article_id, userId)
-        print("article after delet",article["Vocabulary"])
+        # print("article after delet",article["Vocabulary"])
 
         # Convert ObjectId to string before serializing
         article['_id'] = str(article['_id'])
@@ -241,6 +248,7 @@ def read_article():
 
 @routes.route("/add-vocab", methods=["POST"])
 def add_vocabulary():
+    print("Route Logger: Inside add-vocab route")
     try:
         # Get the word and meaning from the request body (assuming JSON format)
         data = request.get_json()
@@ -249,7 +257,10 @@ def add_vocabulary():
         # meaning = data.get('meaning', '')  # Default meaning to an empty string if not provided
 
         # get the meaning for the word
-        meaning = fetch_meaning(word)
+        meaning = fetch_meaning_merriam_webster(word)
+        # meaning = fetch_meaning_Oxford(word)
+
+
         # print("meaning", meaning)
 
         # Add the word and meaning to important vocabulary
@@ -263,6 +274,7 @@ def add_vocabulary():
 
 @routes.route("/saved-vocab", methods=["POST"])
 def get_vocabulary():
+    print("Route Logger: Inside saved-vocab route")
     try:
         # Get the word and meaning from the request body (assuming JSON format)
         data = request.get_json()

@@ -69,18 +69,10 @@
 // export default Layout;
 
 import React, { useState, useContext } from "react";
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { Grid2,MenuItem,Avatar,Container,Menu,Typography,IconButton,Toolbar,Box,AppBar ,Button, Link} from "@mui/material";
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate  } from 'react-router-dom'
 import { DatePicker } from '@mui/x-date-pickers';
@@ -92,6 +84,48 @@ import { ContextApp } from "../utils/context";
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
+const styles= {
+  buttonStyle: {
+    
+      my: 2,
+      color: 'white',
+      display: 'block',
+      fontSize: '18px',
+      textTransform: 'none', // Keep text casing as is
+      backgroundColor: 'transparent', // Initial background
+      transition: 'all 0.3s ease', // Smooth transition for hover effect
+      '&:hover': {
+        backgroundColor: '#cad2c5', // Light gray background on hover
+        color: '#1565c0', // Change text color on hover
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow effect
+      },
+    
+  },
+  datePickerStyle: {
+    '& .MuiInputBase-root': {
+      backgroundColor: '#fefae0',
+      fontSize: '1rem', // Reduce font size
+      height: '40px', // Adjust input height
+      minHeight: 'unset', // Ensure no min height conflicts
+      width: "165px"
+    },
+    '& .MuiInputLabel-root': {
+      color: 'black',
+      fontSize: '1rem', // Reduce label font size
+    },
+    '& .MuiOutlinedInput-root': {
+      borderColor: '#ccc',
+      padding: '0 0px', // Reduce padding
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderRadius: '4px', // Adjust border radius if needed
+    },
+    '& .Mui-focused .MuiInputLabel-root': {
+      color: 'white',
+    },
+  }
+}
 
 function Layout({ children }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -125,8 +159,8 @@ function Layout({ children }) {
 
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-    <AppBar position="fixed" sx={{backgroundColor: '#22333b'}}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', width: '100%', overflowX: 'hidden'}}>
+    <AppBar position="static" sx={{backgroundColor: '#22333b'}}>
       <Container maxWidth="lg" >
         <Toolbar disableGutters>
           {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
@@ -138,7 +172,7 @@ function Layout({ children }) {
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
+              fontFamily: 'Arial, Helvetica, sans-serif',
               fontWeight: 700,
               letterSpacing: '.3rem',
               color: 'inherit',
@@ -182,11 +216,17 @@ function Layout({ children }) {
           } }>
                   <Typography sx={{ textAlign: 'center' }}>My Vocab</Typography>
                 </MenuItem>
-            
+                <MenuItem onClick={() =>  {
+            handleCloseNavMenu()
+            navigate("/about")
+          } }>
+                  <Typography sx={{ textAlign: 'center' }}>About</Typography>
+                </MenuItem>
 
             </Menu>
           </Box>
           {/*web */}
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
           <Typography
             variant="h5"
@@ -197,7 +237,7 @@ function Layout({ children }) {
               mr: 2,
               display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
-              fontFamily: 'monospace',
+              fontFamily: 'Arial, Helvetica, sans-serif',
               fontWeight: 700,
               letterSpacing: '.3rem',
               color: 'inherit',
@@ -206,18 +246,29 @@ function Layout({ children }) {
           >
             Editorials
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, marginLeft: 5 }}>
            
               <Button
           
                 
-                sx={{ my: 2, color: 'white', display: 'block' }}
+          sx={{ ...styles.buttonStyle, marginRight: 2 }}
                 onClick={() =>  {
                   handleCloseNavMenu()
                   navigate("/saved_words")
                 } }
               >
                 My Vocab
+              </Button>
+              <Button
+          
+                
+          sx={styles.buttonStyle}
+                onClick={() =>  {
+                  handleCloseNavMenu()
+                  navigate("/about")
+                } }
+              >
+                About
               </Button>
            
        
@@ -256,52 +307,82 @@ function Layout({ children }) {
             defaultValue={currDate}
             minDate={dayjs('2024-11-09')}
             maxDate={dayjs()}
-            sx={{
-              '& .MuiInputBase-root': {
-                backgroundColor: '#fefae0',
-                fontSize: '1rem', // Reduce font size
-                height: '40px', // Adjust input height
-                minHeight: 'unset', // Ensure no min height conflicts
-                width: "165px"
-              },
-              '& .MuiInputLabel-root': {
-                color: 'black',
-                fontSize: '1rem', // Reduce label font size
-              },
-              '& .MuiOutlinedInput-root': {
-                borderColor: '#ccc',
-                padding: '0 0px', // Reduce padding
-              },
-              '& .MuiOutlinedInput-notchedOutline': {
-                borderRadius: '4px', // Adjust border radius if needed
-              },
-              '& .Mui-focused .MuiInputLabel-root': {
-                color: 'white',
-              },
-            }}
+            sx={styles.datePickerStyle}
             onChange={() => {}}
             onAccept={handleDateChange}
           />
         </LocalizationProvider>
+          </Box>
           </Box>
         </Toolbar>
       </Container>
     </AppBar>
 
       {/* Page Content */}
-      <section style= {{ backgroundColor: '#415a77', flexGrow: 1, }}>
-  <Container maxWidth="lg" sx={{mt:10}}>
+      <Box style= {{ backgroundColor: '#415a77', flexGrow: 1,padding: 0, margin: 0 ,  width: '100%' }}>
+  <Container  maxWidth="lg" sx={{mt:4,  color: 'white' }}>
     {children}
   </Container>
-  </section>
+  </Box>
   
 
     {/* Footer */}
     <footer style={{ backgroundColor: '#f0f0f0', padding: '20px', textAlign: 'center' }}>
-    <Typography variant="body2" color="textSecondary">
-      © 2023 Your Company Name. All rights reserved.
-    </Typography>
-  </footer>
+      <Grid2 container spacing={3} justifyContent="center" alignItems="center">
+        <Grid2 sx={{xs:4,sm:6, md:6, textAlign:"center"}} >
+          <Typography variant="h6">Developed by M Ravi Teja Varma</Typography>
+          
+        </Grid2>
+        
+        <Grid2 container spacing={2} direction={{ xs: 'row', sm: 'row' }} justifyContent="center">
+  <Grid2 sx={{xs:4, sm:4,md:6,}}>
+    <Typography variant="body2" color="textSecondary">ReactJS</Typography>
+  </Grid2>
+  <Grid2 sx={{xs:4, sm:4,md:6,}}>
+    <Typography variant="body2" color="textSecondary">NodeJS</Typography>
+  </Grid2>
+  <Grid2 sx={{xs:4, sm:4,md:6,}}>
+    <Typography variant="body2" color="textSecondary">Python</Typography>
+  </Grid2>
+  <Grid2 sx={{xs:4, sm:4,md:6,}}>
+    <Typography variant="body2" color="textSecondary">MongoDB</Typography>
+  </Grid2>
+  <Grid2 sx={{xs:4, sm:4,md:6,}}>
+    <Typography variant="body2" color="textSecondary">Express</Typography>
+  </Grid2>
+</Grid2>
+
+      </Grid2>
+
+      <Grid2 container spacing={3} justifyContent="center" style={{ marginTop: '20px' }}>
+        <Grid2 >
+          <IconButton href="https://github.com/VarmaDev390" target="_blank" color="primary">
+            <GitHubIcon />
+          </IconButton>
+        </Grid2>
+        <Grid2 >
+          <IconButton href="https://www.linkedin.com/in/malladi-ravi-varma-63a46a216/" target="_blank" color="primary">
+            <LinkedInIcon />
+          </IconButton>
+        </Grid2>
+        {/* <Grid2 >
+          <IconButton href="https://twitter.com/[your-twitter]" target="_blank" color="primary">
+            <TwitterIcon />
+          </IconButton>
+        </Grid2> */}
+      </Grid2>
+
+      <Typography variant="body2" color="textSecondary" style={{ marginTop: '20px' }}>
+        © {new Date().getFullYear()} [Editorial]. All rights reserved.
+      </Typography>
+      {/* <Typography variant="body2" color="textSecondary">
+        <Link href="https://www.your-portfolio.com" target="_blank">Portfolio</Link> | <Link href="mailto:your-email@example.com">Contact</Link>
+      </Typography> */}
+
+      <Typography variant="body2" color="textSecondary" style={{ marginTop: '20px' }}>
+        API credits: <Link href="https://dictionaryapi.com/" target="_blank">Merriam-Webster</Link> | <Link href="https://api-inference.huggingface.co/models/facebook/bart-large-cnn" target="_blank">HuggingFace(Bart)</Link>
+      </Typography>
+    </footer>
     </div>
   );
 }

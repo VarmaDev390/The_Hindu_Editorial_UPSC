@@ -5,6 +5,37 @@ import { Typography, Grid2, Dialog, DialogActions, DialogContent, DialogTitle, B
 import ArticleCard from '../components/articleCard';
 import { ContextApp } from '../utils/context';
 
+const styles= {
+  buttonStyle:{
+    backgroundColor: "#adb5bd",
+    color: "black",
+    textTransform: "none", // Keeps the text casing as is
+    fontSize: "14px",
+    padding: "5px 15px",
+    borderRadius: "8px", // Slightly rounded corners
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
+    "&:hover": {
+      backgroundColor: "#1565c0",
+      color: "white", // Darker shade on hover
+      boxShadow: "0px 6px 8px rgba(0, 0, 0, 0.2)", // Enhanced shadow on hover
+    },
+    "&:active": {
+      backgroundColor: "#0d47a1", // Even darker shade on click
+    },
+  },
+  titleStyle: {
+    paddingBottom: 1
+  },
+  contentStyle: {
+    paddingTop: 1, paddingBottom: 1 
+  },
+  actionStyle: {
+     gap: 1.5, paddingBottom: 2, paddingRight: 3
+  }
+ 
+  
+}
+
 const ArticlesPage = () => {
   const { currDate, articles, setArticles, userId, setUserId} = useContext(ContextApp)
 
@@ -108,13 +139,18 @@ const ArticlesPage = () => {
       case "choose":
         return (
           <>
-            <DialogTitle>Select an Option</DialogTitle>
-            <DialogContent>
-              <p>Are you a new user or an existing user?</p>
+            <DialogTitle sx={styles.titleStyle}>Select an Option</DialogTitle >
+            <DialogContent sx={styles.contentStyle}>
+            <Typography variant="body2" >
+          Are you a new user or an existing user?
+        </Typography>
             </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setDialogStep("existing")}>Existing User</Button>
-              <Button onClick={() => setDialogStep("new")}>New User</Button>
+            <DialogActions sx={styles.actionStyle}>
+              <Button variant="contained"
+      color="primary"
+     sx={styles.buttonStyle} 
+      onClick={() => setDialogStep("existing")}>Existing User</Button>
+              <Button  sx={styles.buttonStyle} onClick={() => setDialogStep("new")}>New User</Button>
             </DialogActions>
           </>
         );
@@ -122,8 +158,8 @@ const ArticlesPage = () => {
       case "new":
         return (
           <>
-            <DialogTitle>Enter Unique Name</DialogTitle>
-            <DialogContent>
+            <DialogTitle sx={styles.titleStyle}>Enter Unique Name</DialogTitle>
+            <DialogContent sx={styles.contentStyle}>
               <TextField
                 autoFocus
                 margin="dense"
@@ -136,9 +172,9 @@ const ArticlesPage = () => {
                 helperText={userExists ? "This username is already taken." : ""}
               />
             </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setDialogStep("choose")}>Back</Button>
-              <Button onClick={handleSaveUserId}>Save</Button>
+            <DialogActions sx={styles.actionStyle}>
+              <Button sx={styles.buttonStyle} onClick={() => setDialogStep("choose")}>Back</Button>
+              <Button sx={styles.buttonStyle} onClick={handleSaveUserId}>Save</Button>
             </DialogActions>
           </>
         );
@@ -146,8 +182,8 @@ const ArticlesPage = () => {
       case "existing":
         return (
           <>
-            <DialogTitle>Enter Existing User ID</DialogTitle>
-            <DialogContent>
+            <DialogTitle sx={styles.titleStyle}>Enter Existing User ID</DialogTitle>
+            <DialogContent sx={styles.contentStyle}>
               <TextField
                 autoFocus
                 margin="dense"
@@ -158,9 +194,9 @@ const ArticlesPage = () => {
                 onChange={(e) => setExistingUserId(e.target.value)}
               />
             </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setDialogStep("choose")}>Back</Button>
-              <Button onClick={handleExistingUserSave}>Save</Button>
+            <DialogActions sx={styles.actionStyle}>
+              <Button sx={styles.buttonStyle} onClick={() => setDialogStep("choose")}>Back</Button>
+              <Button sx={styles.buttonStyle} onClick={handleExistingUserSave}>Save</Button>
             </DialogActions>
           </>
         );
@@ -204,7 +240,7 @@ const ArticlesPage = () => {
   )}
 
   {!loading && !error && articles.length > 0 && (
-    <Grid2 container spacing={3}>
+    <Grid2 container spacing={3} sx={{mb:3}}>
       {articles.map((article, index) => (
         <Grid2 size={{ xs: 12, sm:6, md: 4 }} key={index}>
           <ArticleCard data={article} />
@@ -257,7 +293,11 @@ const ArticlesPage = () => {
           </Button>
         </DialogActions>
       </Dialog> */}
-       <Dialog open={openDialog} onClose={(event, reason) => {
+       <Dialog sx={{
+          "& .MuiPaper-root": {
+            borderRadius: "16px", // Adjust the border radius here
+          },
+        }}  open={openDialog} onClose={(event, reason) => {
     // Prevent dialog from closing unless explicitly closed programmatically
     if (reason !== "backdropClick" && reason !== "escapeKeyDown") {
       setOpenDialog(false);

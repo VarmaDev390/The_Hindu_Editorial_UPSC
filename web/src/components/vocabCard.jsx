@@ -51,22 +51,20 @@ import Typography from '@mui/material/Typography';
 
 export default function VocabCard({word, meaning}) {
   return (
-    <Card sx={{ minWidth: 275 }}>
+    <Card sx={{ maxWidth: 350 }}>
       <CardContent>
-        {/* <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
-          Word of the Day
-        </Typography> */}
+        
         <Typography variant="h5" component="div">
           {word}
         </Typography>
-        {/* <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>adjective</Typography> */}
+       
         <Typography variant="body2">
-          {meaning}
+        {meaning.map((item, index) => (
+        <div key={index}>- {item}</div>
+      ))}
         </Typography>
       </CardContent>
-      {/* <CardActions>
-        <Button size="small">Learn More</Button>
-      </CardActions> */}
+      
     </Card>
   );
 }
