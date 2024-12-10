@@ -3,12 +3,14 @@ import { Typography, Grid2, Box, Paper, Button, Pagination , useTheme, useMediaQ
 import Layout from '../components/layout';
 import { useSnackbar } from 'notistack';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'Axios';
 import { formatDate } from '../utils/helper';
 import VocabCard from '../components/vocabCard';
 import Stack from '@mui/material/Stack';
 import VocabChip from '../components/vocabChip';
 import { ContextApp } from '../utils/context';
+import { useNavigate } from 'react-router-dom';
+
 
 const ArticleDetailPage = () => {
   // Extracting title, summary, and full content from props
@@ -19,6 +21,8 @@ const ArticleDetailPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [currentPage, setCurrentPage] = useState(1);
   const theme = useTheme();
+const navigate = useNavigate()
+
 
 // Check if the screen is at least `sm` (small screen) or `md` (medium screen)
 const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm')); // Small or below (xs)
@@ -26,6 +30,7 @@ const isMediumScreen = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 
 
 // Dynamically adjust itemsPerPage based on screen size
 const itemsPerPage = isSmallScreen ? 15 : isMediumScreen ? 25 : 35; 
+
 
   // Handle page change
   const handlePageChange = (event, value) => {
@@ -38,6 +43,14 @@ const itemsPerPage = isSmallScreen ? 15 : isMediumScreen ? 25 : 35;
     currentPage * itemsPerPage
   );
 
+  useEffect(() => {
+    if (!userId) {
+      navigate('/')
+      window.location.reload()
+      
+    }
+  },[userId])
+  
 
   const handleDelete = async (word) => {
     try {

@@ -84,6 +84,16 @@ def add_user(userId, password):
         print(f"Error adding user to database: {e}")
         return []  
 
+def delete_user(userId):
+    try:
+        users_collection.delete_one({ "userId": userId } )
+        Important_words_collection.delete_one({ "userId": userId } )
+        common_words_collection.delete_one({ "userId": userId } )
+        return { "userId": userId }
+    except Exception as e:
+        print(f"Error deleting user from database: {e}")
+        return [] 
+    
 def get_users():
     try:
         users_cursor = users_collection.find({}, {"userId": 1, "_id": 0})  # Only return userId field, exclude _id

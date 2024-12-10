@@ -3,8 +3,10 @@ import { Typography, Grid2, Box, Paper, Button, Pagination  } from '@mui/materia
 import Layout from '../components/layout';
 import { useSnackbar } from 'notistack';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'Axios';
 import VocabCard from '../components/vocabCard';
+import { useNavigate } from 'react-router-dom';
+
 import { ContextApp } from '../utils/context';
 
 
@@ -15,6 +17,8 @@ const ImportantVocabulary = () => {
     const [savedVocab, setSavedVocab] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
   const {  userId, articles, setArticles} = useContext(ContextApp)
+  const navigate = useNavigate()
+
 
     const itemsPerPage = 9; // Number of items per page
 
@@ -23,6 +27,14 @@ const ImportantVocabulary = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = savedVocab.slice(indexOfFirstItem, indexOfLastItem);
 
+
+  useEffect(() => {
+    if (!userId) {
+      navigate('/')
+      window.location.reload()
+      
+    }
+  },[userId])
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
