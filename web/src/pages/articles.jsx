@@ -124,7 +124,6 @@ const ArticlesPage = () => {
           enqueueSnackbar(`User already exists`, { variant: 'error' });
           // alert("User already exists");
         } else {
-         
           setOpenDialog(false); // Close the dialog
           const resp = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/add-user`, {
             userId:newUserId,
