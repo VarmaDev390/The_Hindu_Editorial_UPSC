@@ -75,31 +75,66 @@ const ArticlesPage = () => {
   // const articlesCache = useRef({});
   const navigate = useNavigate()
 
-  useEffect(() => {
-    // console.log("inside useEffect articles")
-    // console.log(articles,"articles")
-    const storedUserId = localStorage.getItem("userId");
+  // useEffect(() => {
+  //   // console.log("inside useEffect articles")
+  //   // console.log(articles,"articles")
+  //   const storedUserId = localStorage.getItem("userId");
 
-    if (storedUserId) {
-      setUserId(storedUserId); // Set userId from localStorage if available
-    } else {
+  //   if (storedUserId) {
+  //     setUserId(storedUserId); // Set userId from localStorage if available
+  //   } else {
+  //     setOpenDialog(true); // Open dialog if userId is not in localStorage
+  //   }
+  //   const dateKey = currDate.format('YYYY-MM-DD');
+
+
+  //   const fetchData = async () => {
+  //     setLoading(true); // Set loading state
+  //     // console.log("iside fetch");
+
+  //     try {
+  //       const response = await axios.get(
+  //         `${import.meta.env.VITE_BACKEND_URL}/get-articles`,
+  //         { params: { date: dateKey, userId: userId } } // Add currDate as query parameter
+  //       );
+        
+  //       setArticles(response.data.articles);
+  //       // console.log("response.data",response.data.articles)
+  //     } catch (err) {
+  //       console.error(err);
+  //       setError("Failed to load articles");
+  //     } finally {
+  //       setLoading(false); // Set loading state to false after fetching or error
+  //     }
+  //   };
+
+  //   if (articles.length === 0 && userId) {
+  //    fetchData();
+      
+  //   }
+  // }, [currDate, userId]); 
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+  
+    // Check and set userId from localStorage
+    if (storedUserId && !userId) {
+      setUserId(storedUserId); // Set userId only if it's not already set
+    } else if (!storedUserId) {
       setOpenDialog(true); // Open dialog if userId is not in localStorage
     }
-    const dateKey = currDate.format('YYYY-MM-DD');
-
-
+  
+    const dateKey = currDate.format("YYYY-MM-DD");
+  
+    // Fetch data only if userId is available
     const fetchData = async () => {
       setLoading(true); // Set loading state
-      // console.log("iside fetch");
-
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/get-articles`,
-          { params: { date: dateKey, userId: userId } } // Add currDate as query parameter
+          { params: { date: dateKey, userId: userId } }
         );
-        
         setArticles(response.data.articles);
-        // console.log("response.data",response.data.articles)
       } catch (err) {
         console.error(err);
         setError("Failed to load articles");
@@ -107,13 +142,14 @@ const ArticlesPage = () => {
         setLoading(false); // Set loading state to false after fetching or error
       }
     };
-
-    if (articles.length === 0) {
-     fetchData();
-      
+  
+    // Run fetchData only if articles are empty and userId is set
+    if (articles.length === 0 && userId) {
+      fetchData();
     }
-  }, [currDate, userId]); 
+  }, [currDate, userId]);
 
+  
   const handleSaveUserId = async () => {
     if (newUserId.trim()) {
       try {
