@@ -6,18 +6,18 @@ import { IconButton, Chip , Stack, Box} from '@mui/material';
 
 export default function VocabChip({word, onDelete, onSave}) {
   const handleClick = () => {
-    console.info('You clicked the Chip.');
+    // console.info('You clicked the Chip.');
   };
 
   const handleDelete = (event) => {
     event.stopPropagation(); // Prevent triggering the chip's onClick
-    console.info('You clicked the delete icon.');
+    // console.info('You clicked the delete icon.');
     onDelete()
   };
 
   const handleSave = (event) => {
     event.stopPropagation(); // Prevent triggering the chip's onClick
-    console.info("You clicked the save icon.");
+    // console.info("You clicked the save icon.");
     onSave()
   };
 
@@ -33,7 +33,7 @@ export default function VocabChip({word, onDelete, onSave}) {
         //   }}
           onClick={(e) => {
             e.stopPropagation();
-            console.info("You clicked the word.");
+            // console.info("You clicked the word.");
           }}
         >
           {word}

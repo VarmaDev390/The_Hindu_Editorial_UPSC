@@ -60,7 +60,7 @@ const itemsPerPage = isSmallScreen ? 15 : isMediumScreen ? 25 : 35;
         userId: userId 
       });
   
-      console.log("response", response.data);
+      // console.log("response", response.data);
       setArticle(response.data.article);
 
       // Update the articles array in the context
@@ -85,7 +85,7 @@ const itemsPerPage = isSmallScreen ? 15 : isMediumScreen ? 25 : 35;
   };
 
   const handleSave = async (word, meaning = '') => {
-    console.log("word", word, meaning)
+    // console.log("word", word, meaning)
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/add-vocab`, {
         word,
