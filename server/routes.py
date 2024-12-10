@@ -203,7 +203,7 @@ def get_articles_by_date():
     print("Route Logger: Inside get-articles route")
     user_date_str_IST = request.args.get("date")
     userId = request.args.get("userId")
-    
+    print("userId", userId)
     if not user_date_str_IST:
         return jsonify({"error": "Please provide a date in YYYY-MM-DD format."}), 400
 
@@ -219,7 +219,7 @@ def get_articles_by_date():
 
         # Fetch existing titles directly from the database
         existing_titles_cursor = articles_collection.find(
-            {"userId": userId, "title": {"$in": rss_titles}},
+            {"title": {"$in": rss_titles}},
             {"title": 1, "_id": 0}
         )
         existing_titles_set = {doc["title"] for doc in existing_titles_cursor}
