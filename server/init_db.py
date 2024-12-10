@@ -35,6 +35,10 @@ def initialize_db():
         db.create_collection("articles")
         print("Created collection named articles")
 
+     # Add a unique index on the 'title' field for articles collection
+    articles_collection.create_index("title", unique=True)
+    print("Ensured unique index on 'title' for articles collection")
+
     # # Check if collection already has common words
     # if "common_words" not in db.list_collection_names():
     #     common_words_collection.insert_one({"words": initial_common_words})
@@ -50,6 +54,10 @@ def initialize_db():
         db.create_collection("users")
         print("Created collection named users")
 
+    # Add a unique index on 'userId' field for users collection
+    users_collection.create_index("userId", unique=True)
+    print("Ensured unique index on 'userId' for users collection")
+    
     print("MongoDB connection initialized")
 
 if __name__ == "__main__":
