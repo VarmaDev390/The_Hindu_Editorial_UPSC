@@ -241,6 +241,8 @@ def get_articles_by_date():
         # Convert published_date to IST for all articles
         for article in all_articles:
             article["published_date"] = convert_utc_to_ist(article["published_date"])
+        
+        print("allarticle",all_articles)
 
         return jsonify({"articles": all_articles}), 200
 
