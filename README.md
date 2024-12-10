@@ -17,6 +17,16 @@ This project is a complete solution for managing articles, users, and vocabulary
 - **User Management**: Create, delete, and log in/out of user accounts.
 - **Responsive Design**: Fully mobile-friendly design for seamless use across devices.
 
+## Screenshots
+1. Artilces
+![articles](https://github.com/user-attachments/assets/db1eb4c6-3916-4966-a3e9-f9dcf431b95d)
+
+2. Individual Article
+![artical details](https://github.com/user-attachments/assets/251b0f66-eb4f-46ce-9d77-c23ae0df9da5)
+
+3. Saved Vocab
+![saved vocab](https://github.com/user-attachments/assets/9efa4586-7928-4552-95d3-34433cf8181d)
+
 ## Technologies Used
 ### Backend
 - Python (Flask for backend API)
@@ -30,6 +40,7 @@ This project is a complete solution for managing articles, users, and vocabulary
 - Axios (HTTP client for API calls)
 - Material-UI (UI framework)
 - React Router (For client-side routing)
+
 
 ## Getting Started
 ### Backend Setup
