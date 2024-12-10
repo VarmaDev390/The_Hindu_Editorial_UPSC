@@ -159,8 +159,7 @@ const ArticlesPage = () => {
       console.error('Error creating user:', error);
     } finally {
       setIsCreatingUser(false); // Stop loading
-    setLoading(true)
-
+      // setLoading(true)
 
     }
   };
