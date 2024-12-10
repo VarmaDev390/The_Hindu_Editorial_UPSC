@@ -3,7 +3,7 @@ import { Typography, Grid2, Box, Paper, Button, Pagination , useTheme, useMediaQ
 import Layout from '../components/layout';
 import { useSnackbar } from 'notistack';
 import { useLocation } from 'react-router-dom';
-import axios from 'Axios';
+import axios from 'axios';
 import { formatDate } from '../utils/helper';
 import VocabCard from '../components/vocabCard';
 import Stack from '@mui/material/Stack';

@@ -81,7 +81,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import dayjs from 'dayjs';
 import { ContextApp } from "../utils/context";
-import axios from "Axios"
+import axios from "axios"
 import { useSnackbar } from 'notistack';
 
 

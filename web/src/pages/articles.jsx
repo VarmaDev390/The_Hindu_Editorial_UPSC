@@ -1,5 +1,5 @@
 import React,{ useState, useEffect, useContext, useRef} from 'react'
-import axios from 'Axios'
+import axios from 'axios'
 import Layout from '../components/layout';
 import { Typography, Grid2, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField ,Box } from '@mui/material';
 import ArticleCard from '../components/articleCard';
