@@ -145,20 +145,23 @@ def fetch_articles_metadata(date_str_IST):
     feedURL = os.getenv("RSS_FEED_URL")
     feed = feedparser.parse(feedURL)
     metadata = []
+    seen_titles = set()  # Track fetched titles to avoid duplicates
 
     # Parse the provided date string in IST and convert to UTC datetime
     datetime_UTC = parse_date(date_str_IST)
 
     for entry in feed.entries:
-        publish_datetime_UTC = parse_date(entry.published)
-        if publish_datetime_UTC.date() == datetime_UTC.date():
-            metadata.append({
-                "title": entry.title,
-                "link": entry.link,
-                "published_date": publish_datetime_UTC,
-                "article_id": entry.guid,
-            })
-
+        try:
+            publish_datetime_UTC = parse_date(entry.published)
+            if publish_datetime_UTC.date() == datetime_UTC.date():
+                metadata.append({
+                    "title": entry.title,
+                    "link": entry.link,
+                    "published_date": publish_datetime_UTC,
+                    "article_id": entry.guid,
+                })
+        except Exception as e:
+            print(f"Error parsing RSS entry: {e}")
     return metadata
 
 def fetch_meaning_merriam_webster(word):
@@ -191,7 +194,13 @@ def process_new_articles(new_articles_metadata, userId):
     Process new articles by fetching content, summarizing, and extracting vocabulary.
     """
     processed_articles = []
+    seen_titles = set()
     for article_meta in new_articles_metadata:
+        if article_meta["title"] in seen_titles:
+            continue  # Skip duplicate titles
+
+        seen_titles.add(article_meta["title"]) # Mark title as seen
+
         article_content = fetch_full_article_content(article_meta["link"])
         article_summary = summarize_article(article_content)
         article_vocabulary = extract_difficult_vocabulary(article_content, userId)
