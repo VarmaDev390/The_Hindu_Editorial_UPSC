@@ -66,6 +66,8 @@ const ArticlesPage = () => {
   const [existingUserId, setExistingUserId] = useState("");
   const [userExists, setUserExists] = useState(false);
   const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [isloggingUser, setIsLoggingUser] = useState(false);
+
   
   const { enqueueSnackbar } = useSnackbar();
   // console.log("url", import.meta.env.VITE_BACKEND_URL)
@@ -74,7 +76,7 @@ const ArticlesPage = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log("inside useEffect articles")
+    // console.log("inside useEffect articles")
     // console.log(articles,"articles")
     const storedUserId = localStorage.getItem("userId");
 
@@ -118,7 +120,7 @@ const ArticlesPage = () => {
         // Check if the newUserId is unique by calling the backend API
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/get-users`);
         const existingUserIds = response.data.users;
-        console.log("existingUserIds",existingUserIds)
+        // console.log("existingUserIds",existingUserIds)
 
         if (existingUserIds.includes(newUserId)) {
           // If the userId already exists, show error message
@@ -165,6 +167,8 @@ const ArticlesPage = () => {
   };
 
   const handleExistingUserSave = async () => {
+    setOpenDialog(false);
+    setIsLoggingUser(true)
     if (existingUserId.trim()) {
       try {
         // Fetch the list of existing user IDs from the backend
@@ -176,13 +180,15 @@ const ArticlesPage = () => {
           // If the userId exists, proceed with saving it
           setUserId(existingUserId);
           localStorage.setItem("userId", existingUserId); // Save userId to localStorage
-          setOpenDialog(false);
+          setIsLoggingUser(false)
           enqueueSnackbar(`Successfully logged in`, { variant: 'success' });
         } else {
           // If the userId does not exist, show an error message
+
           enqueueSnackbar(`User ID not found. Please try as New user.`, { variant: 'error' });
           setDialogStep("choose")
           setExistingUserId('')
+          setOpenDialog(true);
 
           // setOpenDialog(true);
 
@@ -311,6 +317,16 @@ setNewUserId("")
   >
     <Typography variant="h6" sx={{ color: '#ffffff' }}>
       Creating user, please wait...
+    </Typography>
+  </Box>
+)}
+
+{isloggingUser && (
+  <Box
+  sx={{...styles.loadingStyle, justifyContent: 'center',backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
+  >
+    <Typography variant="h6" sx={{ color: '#ffffff' }}>
+      logging in user, please wait...
     </Typography>
   </Box>
 )}

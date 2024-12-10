@@ -42,14 +42,14 @@ const ImportantVocabulary = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true); // Set loading state
-            console.log("iside fetch", userId);
+            // console.log("iside fetch", userId);
       
             try {
                 const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/saved-vocab`, {
                     
                     userId:userId 
                   });
-                  console.log("response",response.data.words)
+                  // console.log("response",response.data.words)
                   setSavedVocab(response.data.words);
               // console.log("response.data",response.data.articles)
             } catch (err) {
