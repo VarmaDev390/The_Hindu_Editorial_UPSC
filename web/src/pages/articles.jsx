@@ -41,14 +41,15 @@ const styles= {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'center',
+      // justifyContent: 'center',
       position: 'fixed',
-      top: 0,
+      top: 75,
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      zIndex: 1500,
+      padding: 5,
+      // backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      // zIndex: 1500,
     }
  }
   
@@ -57,7 +58,7 @@ const styles= {
 const ArticlesPage = () => {
   const { currDate, articles, setArticles, userId, setUserId} = useContext(ContextApp)
 
-  const [loading, setLoading] = useState(articles.length === 0 ? true: false);
+  const [loading, setLoading] = useState(articles.length === 0 && userId ? true: false);
   const [dialogStep, setDialogStep] = useState("choose");
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -122,6 +123,7 @@ const ArticlesPage = () => {
           // If the userId already exists, show error message
           setUserExists(true);
           enqueueSnackbar(`User already exists`, { variant: 'error' });
+          setOpenDialog(true);
           // alert("User already exists");
         } else {
           setOpenDialog(false); // Close the dialog
@@ -150,27 +152,45 @@ const ArticlesPage = () => {
     setIsCreatingUser(true); // Start loading
     setOpenDialog(false)
     try {
-      await handleSaveUserId(); // Replace with your user creation logic
-      // Additional success handling
+      await handleSaveUserId(); 
     } catch (error) {
       console.error('Error creating user:', error);
     } finally {
       setIsCreatingUser(false); // Stop loading
+
     }
   };
 
-  const handleExistingUserSave = () => {
+  const handleExistingUserSave = async () => {
     if (existingUserId.trim()) {
-      // Directly set the existing userId
-      setUserId(existingUserId);
-      localStorage.setItem("userId", existingUserId); // Save userId to localStorage
-      setOpenDialog(false);
-      enqueueSnackbar(`Successfully loggedIn`, { variant: 'success' }); 
-           
+      try {
+        // Fetch the list of existing user IDs from the backend
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/get-users`);
+        const existingUserIds = response.data.users;
+  
+        // Check if the entered userId exists
+        if (existingUserIds.includes(existingUserId)) {
+          // If the userId exists, proceed with saving it
+          setUserId(existingUserId);
+          localStorage.setItem("userId", existingUserId); // Save userId to localStorage
+          setOpenDialog(false);
+          enqueueSnackbar(`Successfully logged in`, { variant: 'success' });
+        } else {
+          // If the userId does not exist, show an error message
+          enqueueSnackbar(`User ID not found. Please try as New user.`, { variant: 'error' });
+          setDialogStep("choose")
+          // setOpenDialog(true);
+
+        }
+      } catch (error) {
+        console.error("Error checking existing user ID", error);
+        enqueueSnackbar(`There was an error verifying the user ID. Please try again.`, { variant: 'error' });
+      }
     } else {
       alert("Please enter a valid user ID.");
     }
   };
+  
 
   const renderDialogContent = () => {
     switch (dialogStep) {
@@ -256,7 +276,7 @@ const ArticlesPage = () => {
       >
         {loading && (
           <Box
-          sx={styles.loading}
+          sx={styles.loadingStyle}
           >
             <Typography variant="h6" sx={{ color: '#ffffff' }}>
               Please wait, we are summarizing articles for you...
@@ -264,9 +284,19 @@ const ArticlesPage = () => {
           </Box>
         )}
 
+{!loading && !error && articles.length === 0 && (
+          <Box
+          sx={styles.loadingStyle}
+          >
+            <Typography variant="h6" sx={{ color: '#ffffff' }}>
+              No articles found for the date, choose another date
+            </Typography>
+          </Box>
+        )}
+
 {isCreatingUser && (
   <Box
-    sx={styles.loading}
+    sx={styles.loadingStyle}
   >
     <Typography variant="h6" sx={{ color: '#ffffff' }}>
       Creating user, please wait...
@@ -286,15 +316,7 @@ const ArticlesPage = () => {
           </Grid2>
         )}
 
-        {!loading && !error && articles.length === 0 && (
-          <Box
-          sx={styles.loading}
-          >
-            <Typography variant="h6" sx={{ color: '#ffffff' }}>
-              No articles found for the selected date, choose another date
-            </Typography>
-          </Box>
-        )}
+
       </Box>
 
       {/* User ID Dialog */}
