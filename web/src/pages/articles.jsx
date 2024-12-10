@@ -33,7 +33,7 @@ const styles= {
   },
   actionStyle: {
      gap: 1.5, paddingBottom: 2, paddingRight: 3
-  }
+  },
  loadingStyle: {
 
       display: 'flex',
@@ -50,7 +50,7 @@ const styles= {
     }
  }
   
-}
+
 
 const ArticlesPage = () => {
   const { currDate, articles, setArticles, userId, setUserId} = useContext(ContextApp)
