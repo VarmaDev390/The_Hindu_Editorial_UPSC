@@ -154,6 +154,7 @@ def fetch_articles_metadata(date_str_IST):
         try:
             publish_datetime_UTC = parse_date(entry.published)
             if publish_datetime_UTC.date() == datetime_UTC.date():
+                seen_titles.add(entry.title)  # Mark title as seen
                 metadata.append({
                     "title": entry.title,
                     "link": entry.link,
