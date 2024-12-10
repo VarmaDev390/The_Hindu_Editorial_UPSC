@@ -43,7 +43,7 @@ const styles= {
       alignItems: 'center',
       // justifyContent: 'center',
       position: 'fixed',
-      top: 75,
+      top: 0,
       left: 0,
       right: 0,
       bottom: 0,
@@ -118,6 +118,7 @@ const ArticlesPage = () => {
         // Check if the newUserId is unique by calling the backend API
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/get-users`);
         const existingUserIds = response.data.users;
+        console.log("existingUserIds",existingUserIds)
 
         if (existingUserIds.includes(newUserId)) {
           // If the userId already exists, show error message
@@ -149,6 +150,7 @@ const ArticlesPage = () => {
   };
 
   const handleUserCreation = async () => {
+    setLoading(false)
     setIsCreatingUser(true); // Start loading
     setOpenDialog(false)
     try {
@@ -157,6 +159,8 @@ const ArticlesPage = () => {
       console.error('Error creating user:', error);
     } finally {
       setIsCreatingUser(false); // Stop loading
+    setLoading(true)
+
 
     }
   };
@@ -179,6 +183,8 @@ const ArticlesPage = () => {
           // If the userId does not exist, show an error message
           enqueueSnackbar(`User ID not found. Please try as New user.`, { variant: 'error' });
           setDialogStep("choose")
+          setExistingUserId('')
+
           // setOpenDialog(true);
 
         }
@@ -231,7 +237,10 @@ const ArticlesPage = () => {
               />
             </DialogContent>
             <DialogActions sx={styles.actionStyle}>
-              <Button sx={styles.buttonStyle} onClick={() => setDialogStep("choose")}>Back</Button>
+              <Button sx={styles.buttonStyle} onClick={() => {
+setDialogStep("choose")
+setNewUserId("")
+              } }>Back</Button>
               <Button sx={styles.buttonStyle} onClick={handleUserCreation}>Save</Button>
             </DialogActions>
           </>
@@ -253,7 +262,10 @@ const ArticlesPage = () => {
               />
             </DialogContent>
             <DialogActions sx={styles.actionStyle}>
-              <Button sx={styles.buttonStyle} onClick={() => setDialogStep("choose")}>Back</Button>
+              <Button sx={styles.buttonStyle} onClick={() =>{
+ setDialogStep("choose")
+ setExistingUserId("")
+              }}>Back</Button>
               <Button sx={styles.buttonStyle} onClick={handleExistingUserSave}>Login</Button>
             </DialogActions>
           </>
@@ -276,7 +288,7 @@ const ArticlesPage = () => {
       >
         {loading && (
           <Box
-          sx={styles.loadingStyle}
+          sx={{...styles.loadingStyle, justifyContent: 'center',backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
           >
             <Typography variant="h6" sx={{ color: '#ffffff' }}>
               Please wait, we are summarizing articles for you...
@@ -286,7 +298,7 @@ const ArticlesPage = () => {
 
 {!loading && !error && articles.length === 0 && (
           <Box
-          sx={styles.loadingStyle}
+          sx={{...styles.loadingStyle, top: 75}}
           >
             <Typography variant="h6" sx={{ color: '#ffffff' }}>
               No articles found for the date, choose another date
@@ -296,7 +308,7 @@ const ArticlesPage = () => {
 
 {isCreatingUser && (
   <Box
-    sx={styles.loadingStyle}
+  sx={{...styles.loadingStyle, justifyContent: 'center',backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
   >
     <Typography variant="h6" sx={{ color: '#ffffff' }}>
       Creating user, please wait...
