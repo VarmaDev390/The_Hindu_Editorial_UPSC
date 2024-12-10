@@ -81,6 +81,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import dayjs from 'dayjs';
 import { ContextApp } from "../utils/context";
+import axios from "Axios"
+import { useSnackbar } from 'notistack';
+
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -130,8 +133,10 @@ const styles= {
 function Layout({ children }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const { setCurrDate, currDate, setArticles} = useContext(ContextApp)
+  const { setCurrDate, currDate, setArticles, userId} = useContext(ContextApp)
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
 
   
   const handleDateChange = (newDate) => {
@@ -155,6 +160,38 @@ function Layout({ children }) {
     setAnchorElUser(null);
   };
 
+  const handleLogout = () => {
+    handleCloseUserMenu()
+    localStorage.removeItem('userId')
+    enqueueSnackbar(`Successfully LoggedOut`, { variant: 'success' }); 
+    navigate("/")
+    window.location.reload()
+
+  }
+
+  const handleDeleteAccount = async () => {
+    handleCloseUserMenu()
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/delete-user`, {
+         
+        userId: userId 
+      });
+
+      if (response.status !== 200) {
+        throw new Error('Failed to delete Account');
+      }
+    localStorage.removeItem('userId')
+    enqueueSnackbar(`Successfully deleted Account`, { variant: 'success' }); 
+
+    navigate("/")
+    window.location.reload()
+
+    } catch(error) {
+      enqueueSnackbar(`Error deleting Account`, { variant: 'error' });
+      console.error('Error deleting Account:', error);
+    }
+  }
 
 
 
@@ -324,11 +361,14 @@ function Layout({ children }) {
     open={Boolean(anchorElUser)}
     onClose={handleCloseUserMenu}
   >
-    {settings.map((setting) => (
-      <MenuItem key={setting} onClick={handleCloseUserMenu}>
-        <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+    {/* {settings.map((setting) => ( */}
+      <MenuItem key="logout" onClick={handleLogout}>
+        <Typography sx={{ textAlign: 'center' }}>Logout</Typography>
       </MenuItem>
-    ))}
+      <MenuItem key="del acc" onClick={handleDeleteAccount}>
+        <Typography sx={{ textAlign: 'center' }}>Delete Account</Typography>
+      </MenuItem>
+    {/* ))} */}
   </Menu>
 </Box>
 

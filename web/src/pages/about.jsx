@@ -1,11 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Typography, Grid2, Box, Paper, Button } from '@mui/material';
 import Layout from '../components/layout';
-
+import { useNavigate } from 'react-router-dom';
 import { ContextApp } from '../utils/context';
 
 const About = () => {
   const { userId, articles, setArticles } = useContext(ContextApp);
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!userId) {
+      navigate('/')
+      window.location.reload()
+      
+    }
+  },[userId])
 
   return (
     <Layout>

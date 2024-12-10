@@ -1,10 +1,12 @@
 import React,{ useState, useEffect, useContext, useRef} from 'react'
-import axios from 'axios'
+import axios from 'Axios'
 import Layout from '../components/layout';
 import { Typography, Grid2, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField ,Box } from '@mui/material';
 import ArticleCard from '../components/articleCard';
 import { ContextApp } from '../utils/context';
 import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
+
 
 
 const styles= {
@@ -63,13 +65,15 @@ const ArticlesPage = () => {
   const [existingUserId, setExistingUserId] = useState("");
   const [userExists, setUserExists] = useState(false);
   const [isCreatingUser, setIsCreatingUser] = useState(false);
+  
   const { enqueueSnackbar } = useSnackbar();
   // console.log("url", import.meta.env.VITE_BACKEND_URL)
 
   // const articlesCache = useRef({});
+  const navigate = useNavigate()
 
   useEffect(() => {
-    // console.log("inside useEffect")
+    console.log("inside useEffect articles")
     // console.log(articles,"articles")
     const storedUserId = localStorage.getItem("userId");
 
@@ -105,7 +109,7 @@ const ArticlesPage = () => {
      fetchData();
       
     }
-  }, [currDate]); 
+  }, [currDate, userId]); 
 
   const handleSaveUserId = async () => {
     if (newUserId.trim()) {
@@ -231,7 +235,7 @@ const ArticlesPage = () => {
             </DialogContent>
             <DialogActions sx={styles.actionStyle}>
               <Button sx={styles.buttonStyle} onClick={() => setDialogStep("choose")}>Back</Button>
-              <Button sx={styles.buttonStyle} onClick={handleExistingUserSave}>Save</Button>
+              <Button sx={styles.buttonStyle} onClick={handleExistingUserSave}>Login</Button>
             </DialogActions>
           </>
         );

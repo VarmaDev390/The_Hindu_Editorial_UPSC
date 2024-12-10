@@ -1,7 +1,7 @@
 from flask import Blueprint,request,jsonify
 from utils import extract_difficult_vocabulary, convert_utc_to_ist, process_new_articles, fetch_articles_metadata, fetch_meaning_merriam_webster, fetch_meaning_Oxford
 import requests
-from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word, mark_article, get_saved_words, add_user, get_users, initiate_user_common_word
+from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word, mark_article, get_saved_words, add_user, get_users, initiate_user_common_word, delete_user
 from datetime import datetime
 
 
@@ -123,6 +123,22 @@ def add_user_route():
         print(f"Error adding user: {e}")
         return jsonify({"error": "An error occurred while adding user."}), 500
 
+@routes.route("/delete-user", methods=["POST"])
+def delete_user_route():
+    print("Route Logger: Inside delete-user route")
+
+    try:
+        data = request.get_json()
+        userId = data.get('userId')
+        
+
+        user_data = delete_user(userId)
+
+        return jsonify({"messsage": "success"}), 200
+    except Exception as e:
+        print(f"Error deleting user: {e}")
+        return jsonify({"error": "An error occurred while deelting user."}), 500
+
 @routes.route("/get-articles", methods=["GET"])
 def get_articles_by_date():
     print("Route Logger: Inside get-articles route")
@@ -193,6 +209,7 @@ def get_users_route():
     except Exception as e:
         print(f"Error fetching users: {e}")
         return jsonify({"error": "An error occurred while fetching users."}), 500
+    
     
 @routes.route("/delete-vocab", methods=["POST"])
 def delete_vocabulary():
