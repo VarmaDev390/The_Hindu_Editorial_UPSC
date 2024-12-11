@@ -140,109 +140,55 @@ def delete_user_route():
         print(f"Error deleting user: {e}")
         return jsonify({"error": "An error occurred while deelting user."}), 500
 
-# @routes.route("/get-articles", methods=["GET"])
-# def get_articles_by_date():
-#     print("Route Logger: Inside get-articles route")
-#     user_date_str_IST = request.args.get("date")
-#     userId = request.args.get("userId")
-    
-#     if not user_date_str_IST:
-#         return jsonify({"error": "Please provide a date in YYYY-MM-DD format."}), 400
-
-#     try:
-#         # Parse user date to datetime
-#         user_datetime_IST = datetime.strptime(user_date_str_IST, "%Y-%m-%d")
-#         # print("user_date", user_datetime_IST)
-
-#         # Fetch existing articles from DB
-#         db_articles = get_all_articles_by_date(user_datetime_IST, userId)
-#         # create a set conataing article titles
-#         db_titles = set()
-#         for article in db_articles:
-#             db_titles.add(article["title"])
-#         # print("db_titles",db_titles)
-
-#         # Fetch metadata from RSS feed
-#         rss_metadata = fetch_articles_metadata(user_date_str_IST)
-#         # print("rss_metadata",rss_metadata)
-
-
-#         # Identify new articles from RSS metadata
-#         new_articles_metadata = []
-#         for article in rss_metadata:
-#             if article["title"] not in db_titles:
-#                 new_articles_metadata.append(article)
-#         # print("new_articles_metadata",new_articles_metadata)
-
-#         # Process and insert new articles
-#         new_articles = process_new_articles(new_articles_metadata, userId)
-#         # new_articles = new_articles_metadata
-#         # print("new_articles",new_articles)
-
-#         for article in new_articles:
-#             insert_article(article)
-
-#         # Combine DB articles and newly added articles
-#         all_articles = db_articles + new_articles
-
-#         # Convert published_date to IST for all articles
-#         for article in all_articles:
-#             article["published_date"] = convert_utc_to_ist(article["published_date"])
-#             # print("Article published_date (IST)", article["published_date"])
-
-#         return jsonify({"articles": all_articles}), 200
-
-#     except ValueError:
-#         return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
-#     except Exception as e:
-#         print(f"Error fetching articles: {e}")
-#         return jsonify({"error": "An error occurred while fetching articles."}), 500
-
 @routes.route("/get-articles", methods=["GET"])
 def get_articles_by_date():
     print("Route Logger: Inside get-articles route")
     user_date_str_IST = request.args.get("date")
     userId = request.args.get("userId")
-    print("userId", userId)
+    
     if not user_date_str_IST:
         return jsonify({"error": "Please provide a date in YYYY-MM-DD format."}), 400
 
     try:
         # Parse user date to datetime
         user_datetime_IST = datetime.strptime(user_date_str_IST, "%Y-%m-%d")
-        
+        # print("user_date", user_datetime_IST)
+
+        # Fetch existing articles from DB
+        db_articles = get_all_articles_by_date(user_datetime_IST, userId)
+        # create a set conataing article titles
+        db_titles = set()
+        for article in db_articles:
+            db_titles.add(article["title"])
+        # print("db_titles",db_titles)
+
         # Fetch metadata from RSS feed
         rss_metadata = fetch_articles_metadata(user_date_str_IST)
+        # print("rss_metadata",rss_metadata)
 
-        # Extract titles from RSS metadata
-        rss_titles = [article["title"] for article in rss_metadata]
 
-        # Fetch existing titles directly from the database
-        existing_titles_cursor = articles_collection.find(
-            {"title": {"$in": rss_titles}},
-            {"title": 1, "_id": 0}
-        )
-        existing_titles_set = {doc["title"] for doc in existing_titles_cursor}
-
-        # Identify new articles by filtering out existing titles
-        new_articles_metadata = [
-            article for article in rss_metadata if article["title"] not in existing_titles_set
-        ]
+        # Identify new articles from RSS metadata
+        new_articles_metadata = []
+        for article in rss_metadata:
+            if article["title"] not in db_titles:
+                new_articles_metadata.append(article)
+        # print("new_articles_metadata",new_articles_metadata)
 
         # Process and insert new articles
         new_articles = process_new_articles(new_articles_metadata, userId)
+        # new_articles = new_articles_metadata
+        # print("new_articles",new_articles)
+
         for article in new_articles:
             insert_article(article)
 
-        # Fetch all articles for the given date and user
-        db_articles = get_all_articles_by_date(user_datetime_IST, userId)
-        all_articles = db_articles
+        # Combine DB articles and newly added articles
+        all_articles = db_articles + new_articles
 
         # Convert published_date to IST for all articles
         for article in all_articles:
             article["published_date"] = convert_utc_to_ist(article["published_date"])
-        
-        print("allarticle",all_articles)
+            # print("Article published_date (IST)", article["published_date"])
 
         return jsonify({"articles": all_articles}), 200
 
@@ -251,6 +197,60 @@ def get_articles_by_date():
     except Exception as e:
         print(f"Error fetching articles: {e}")
         return jsonify({"error": "An error occurred while fetching articles."}), 500
+
+# @routes.route("/get-articles", methods=["GET"])
+# def get_articles_by_date():
+#     print("Route Logger: Inside get-articles route")
+#     user_date_str_IST = request.args.get("date")
+#     userId = request.args.get("userId")
+#     print("date", user_date_str_IST)
+#     if not user_date_str_IST:
+#         return jsonify({"error": "Please provide a date in YYYY-MM-DD format."}), 400
+
+#     try:
+#         # Parse user date to datetime
+#         user_datetime_IST = datetime.strptime(user_date_str_IST, "%Y-%m-%d")
+        
+#         # Fetch metadata from RSS feed
+#         rss_metadata = fetch_articles_metadata(user_date_str_IST)
+
+#         # Extract titles from RSS metadata
+#         rss_titles = [article["title"] for article in rss_metadata]
+
+#         # Fetch existing titles directly from the database
+#         existing_titles_cursor = articles_collection.find(
+#             {"title": {"$in": rss_titles}},
+#             {"title": 1, "_id": 0}
+#         )
+#         existing_titles_set = {doc["title"] for doc in existing_titles_cursor}
+
+#         # Identify new articles by filtering out existing titles
+#         new_articles_metadata = [
+#             article for article in rss_metadata if article["title"] not in existing_titles_set
+#         ]
+
+#         # Process and insert new articles
+#         new_articles = process_new_articles(new_articles_metadata, userId)
+#         for article in new_articles:
+#             insert_article(article)
+
+#         # Fetch all articles for the given date and user
+#         db_articles = get_all_articles_by_date(user_datetime_IST, userId)
+#         all_articles = db_articles
+
+#         # Convert published_date to IST for all articles
+#         for article in all_articles:
+#             article["published_date"] = convert_utc_to_ist(article["published_date"])
+        
+#         print("allarticle",all_articles)
+
+#         return jsonify({"articles": all_articles}), 200
+
+#     except ValueError:
+#         return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
+#     except Exception as e:
+#         print(f"Error fetching articles: {e}")
+#         return jsonify({"error": "An error occurred while fetching articles."}), 500
 
 
 @routes.route("/get-users", methods=["GET"])
