@@ -15,10 +15,14 @@ app = Flask(__name__)
 # Register routes blueprint
 app.register_blueprint(routes)
 
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+# local
+# allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+# CORS(app, origins="http://localhost:5173")
+
+deployment
+allowed_origins = os.getenv("ALLOWED_ORIGINS",  "https://the-hindu-editorial-upsc.onrender.com/").split(",")
 CORS(app, resources={r"/*": {"origins": allowed_origins}})
 
-# CORS(app, origins="http://localhost:5173")
 
 
 if __name__ == "__main__":
