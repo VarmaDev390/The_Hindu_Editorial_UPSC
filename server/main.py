@@ -20,8 +20,8 @@ app.register_blueprint(routes)
 # CORS(app, origins="http://localhost:5173")
 
 # deployment
-allowed_origins = os.getenv("ALLOWED_ORIGINS",  "https://the-hindu-editorial-upsc.onrender.com/").split(",")
-CORS(app, resources={r"/*": {"origins": allowed_origins}})
+allowed_origins = os.getenv("ALLOWED_ORIGINS",  "https://the-hindu-editorial-upsc.onrender.com").split(",")
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 
