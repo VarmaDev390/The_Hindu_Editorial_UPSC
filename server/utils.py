@@ -10,7 +10,7 @@ from database import get_common_words
 from datetime import datetime, timezone
 from dateutil import parser, tz
 from dotenv import load_dotenv
-from ptytz import timezone
+from pytz import timezone
 import os
 
 
