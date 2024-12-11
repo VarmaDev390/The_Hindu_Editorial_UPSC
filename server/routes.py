@@ -156,7 +156,8 @@ def get_articles_by_date():
 
         # Fetch existing articles from DB
         db_articles = get_all_articles_by_date(user_datetime_IST, userId)
-        # create a set conataing article titles
+        
+        # Extract titles from Db articles
         db_titles = set()
         for article in db_articles:
             db_titles.add(article["title"])
