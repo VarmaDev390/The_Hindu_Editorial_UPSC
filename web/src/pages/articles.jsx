@@ -134,6 +134,7 @@ const ArticlesPage = () => {
           `${import.meta.env.VITE_BACKEND_URL}/get-articles`,
           { params: { date: dateKey, userId: userId } }
         );
+        console.log("articles",response.data.articles)
         setArticles(response.data.articles);
       } catch (err) {
         console.error(err);
