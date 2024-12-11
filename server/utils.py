@@ -10,7 +10,6 @@ from database import get_common_words
 from datetime import datetime, timezone
 from dateutil import parser, tz
 from dotenv import load_dotenv
-from pytz import timezone
 import os
 
 
@@ -73,15 +72,21 @@ def fetch_full_article_content(url):
         print(f"Error fetching article content from {url}: {e}")
         return "Full article content not available."
 
-def parse_date(date):
-    "for converting published date(string format) from hindu(ist) to utc"
-    date = parser.parse(date)
-    # print("date", date)
+# def parse_date(date):
+#     "for converting published date(string format) from hindu(ist) to utc"
+#     date = parser.parse(date)
+#     # print("date", date)
 
-    # covnert to utc
-    date_utc = date.astimezone(timezone.utc)
-    # print("date_utc", date_utc)
-    return date_utc
+#     # covnert to utc
+#     date_utc = date.astimezone(timezone.utc)
+#     # print("date_utc", date_utc)
+#     return date_utc
+def parse_date(date):
+    # Parse date as IST
+    ist_zone = tz.gettz("Asia/Kolkata")
+    date = parser.parse(date).replace(tzinfo=ist_zone)
+    # Convert to UTC
+    return date.astimezone(timezone.utc)
 
 def convert_ist_to_utc(ist_date):
     "for converting date(date time format) to utc"
@@ -138,52 +143,18 @@ def convert_utc_to_ist(utc_datetime):
 
 #     return articles
 
-# def fetch_articles_metadata(date_str_IST):
-#     """
-#     Fetch metadata of articles from RSS feed for the given date.
-#     """
-#     print("Fetching article metadata from RSS feed")
-#     feedURL = os.getenv("RSS_FEED_URL")
-#     feed = feedparser.parse(feedURL)
-#     metadata = []
-#     seen_titles = set()  # Track fetched titles to avoid duplicates
-
-#     # Parse the provided date string in IST and convert to UTC datetime
-#     datetime_UTC = parse_date(date_str_IST)
-
-#     for entry in feed.entries:
-#         try:
-#             publish_datetime_UTC = parse_date(entry.published)
-#             if publish_datetime_UTC.date() == datetime_UTC.date():
-#                 seen_titles.add(entry.title)  # Mark title as seen
-#                 metadata.append({
-#                     "title": entry.title,
-#                     "link": entry.link,
-#                     "published_date": publish_datetime_UTC,
-#                     "article_id": entry.guid,
-#                 })
-#         except Exception as e:
-#             print(f"Error parsing RSS entry: {e}")
-#     return metadata
-
 def fetch_articles_metadata(date_str_IST):
     """
     Fetch metadata of articles from RSS feed for the given date.
     """
-    IST = timezone("Asia/Kolkata")
-    UTC = timezone("UTC")
     print("Fetching article metadata from RSS feed")
     feedURL = os.getenv("RSS_FEED_URL")
     feed = feedparser.parse(feedURL)
-
-
-    # Convert IST date string to UTC
-    user_datetime_IST = IST.localize(datetime.strptime(date_str_IST, "%Y-%m-%d"))
-    datetime_UTC = user_datetime_IST.astimezone(UTC)
-
     metadata = []
     seen_titles = set()  # Track fetched titles to avoid duplicates
 
+    # Parse the provided date string in IST and convert to UTC datetime
+    datetime_UTC = parse_date(f"{date_str_IST}T00:00:00+05:30")  # Ensure IST timezone
 
     for entry in feed.entries:
         try:
@@ -199,6 +170,40 @@ def fetch_articles_metadata(date_str_IST):
         except Exception as e:
             print(f"Error parsing RSS entry: {e}")
     return metadata
+
+# def fetch_articles_metadata(date_str_IST):
+#     """
+#     Fetch metadata of articles from RSS feed for the given date.
+#     """
+#     IST = timezone("Asia/Kolkata")
+#     UTC = timezone("UTC")
+#     print("Fetching article metadata from RSS feed")
+#     feedURL = os.getenv("RSS_FEED_URL")
+#     feed = feedparser.parse(feedURL)
+
+
+#     # Convert IST date string to UTC
+#     user_datetime_IST = IST.localize(datetime.strptime(date_str_IST, "%Y-%m-%d"))
+#     datetime_UTC = user_datetime_IST.astimezone(UTC)
+
+#     metadata = []
+#     seen_titles = set()  # Track fetched titles to avoid duplicates
+
+
+#     for entry in feed.entries:
+#         try:
+#             publish_datetime_UTC = parse_date(entry.published)
+#             if publish_datetime_UTC.date() == datetime_UTC.date():
+#                 seen_titles.add(entry.title)  # Mark title as seen
+#                 metadata.append({
+#                     "title": entry.title,
+#                     "link": entry.link,
+#                     "published_date": publish_datetime_UTC,
+#                     "article_id": entry.guid,
+#                 })
+#         except Exception as e:
+#             print(f"Error parsing RSS entry: {e}")
+#     return metadata
 
 
 def fetch_meaning_merriam_webster(word):
