@@ -16,6 +16,8 @@ const ArticleDetailPage = () => {
   // Extracting title, summary, and full content from props
   const location = useLocation();
   const [article, setArticle] = useState(location.state?.article)
+  // console.log("article",article)
+
   // const { title, summary, full_content, published_date, Vocabulary, article_id } = location.state?.article;
   const {  userId, articles, setArticles} = useContext(ContextApp)
   const { enqueueSnackbar } = useSnackbar();

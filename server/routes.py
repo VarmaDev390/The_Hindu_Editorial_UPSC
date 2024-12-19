@@ -1,7 +1,7 @@
 from flask import Blueprint,request,jsonify
 from utils import extract_difficult_vocabulary, convert_utc_to_ist, process_new_articles, fetch_articles_metadata, fetch_meaning_merriam_webster, fetch_meaning_Oxford
 import requests
-from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word, mark_article, get_saved_words, add_user, get_users, initiate_user_common_word, delete_user
+from database import insert_article, get_all_articles_by_date, add_common_word, get_article_by_id, del_vocab_from_article, add_imp_word, mark_article, get_saved_words, add_user, get_users, initiate_user_common_word, delete_user, get_article_by_id
 from datetime import datetime
 from init_db import db, articles_collection
 
@@ -199,59 +199,19 @@ def get_articles_by_date():
         print(f"Error fetching articles: {e}")
         return jsonify({"error": "An error occurred while fetching articles."}), 500
 
-# @routes.route("/get-articles", methods=["GET"])
-# def get_articles_by_date():
-#     print("Route Logger: Inside get-articles route")
-#     user_date_str_IST = request.args.get("date")
-#     userId = request.args.get("userId")
-#     print("date", user_date_str_IST)
-#     if not user_date_str_IST:
-#         return jsonify({"error": "Please provide a date in YYYY-MM-DD format."}), 400
+@routes.route("/get-article", methods=["GET"])
+def get_article_By_Id():
+    try:
+        userId = request.args.get("userId")
+        article_id = request.args.get("articleId")
 
-#     try:
-#         # Parse user date to datetime
-#         user_datetime_IST = datetime.strptime(user_date_str_IST, "%Y-%m-%d")
+        article = get_article_by_id(article_id, userId)
         
-#         # Fetch metadata from RSS feed
-#         rss_metadata = fetch_articles_metadata(user_date_str_IST)
-
-#         # Extract titles from RSS metadata
-#         rss_titles = [article["title"] for article in rss_metadata]
-
-#         # Fetch existing titles directly from the database
-#         existing_titles_cursor = articles_collection.find(
-#             {"title": {"$in": rss_titles}},
-#             {"title": 1, "_id": 0}
-#         )
-#         existing_titles_set = {doc["title"] for doc in existing_titles_cursor}
-
-#         # Identify new articles by filtering out existing titles
-#         new_articles_metadata = [
-#             article for article in rss_metadata if article["title"] not in existing_titles_set
-#         ]
-
-#         # Process and insert new articles
-#         new_articles = process_new_articles(new_articles_metadata, userId)
-#         for article in new_articles:
-#             insert_article(article)
-
-#         # Fetch all articles for the given date and user
-#         db_articles = get_all_articles_by_date(user_datetime_IST, userId)
-#         all_articles = db_articles
-
-#         # Convert published_date to IST for all articles
-#         for article in all_articles:
-#             article["published_date"] = convert_utc_to_ist(article["published_date"])
-        
-#         print("allarticle",all_articles)
-
-#         return jsonify({"articles": all_articles}), 200
-
-#     except ValueError:
-#         return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
-#     except Exception as e:
-#         print(f"Error fetching articles: {e}")
-#         return jsonify({"error": "An error occurred while fetching articles."}), 500
+        return jsonify({"article": article}), 200
+    except Exception as e:
+        print(f"Error fetching article: {e}")
+        return jsonify({"error": "An error occurred while article data."}), 500
+    
 
 
 @routes.route("/get-users", methods=["GET"])
@@ -277,6 +237,7 @@ def delete_vocabulary():
         word = data.get('word')
         article_id = data.get('articleId')
         userId = data.get('userId')
+       
 
         # Validate the input
         if not word or not article_id:
@@ -293,7 +254,7 @@ def delete_vocabulary():
         # print("article after delet",article["Vocabulary"])
 
         # Convert ObjectId to string before serializing
-        article['_id'] = str(article['_id'])
+        # article['_id'] = str(article['_id'])
 
         return jsonify({"article": article}), 200
     except Exception as e:

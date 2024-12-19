@@ -34,9 +34,17 @@ english_words = set(nltk_words.words())
 def extract_difficult_vocabulary(text, userId):
     # Tokenize and clean the text
     words = re.findall(r'\b\w+\b', text.lower())
+
+    initial_common_words = [
+    "the", "be", "to", "of", "and", "a", "in", "that", "have", "it", 
+    "you", "he", "with", "on", "do", "at", "by", "this", "but", "from", 
+    "not", "or", "which", "all", "she", "an", "they", "my", "one", "if"
+    # Add more common words as needed...
+]
     
     # Filter out common words and consider words only in English dictionary
-    common_words= get_common_words(userId)
+    common_words = get_common_words(userId) if userId else initial_common_words
+
     difficult_words = [word for word in words 
                        if word not in common_words 
                        and word in english_words 
