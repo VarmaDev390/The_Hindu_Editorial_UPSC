@@ -83,6 +83,8 @@ import dayjs from 'dayjs';
 import { ContextApp } from "../utils/context";
 import axios from "axios"
 import { useSnackbar } from 'notistack';
+import UserDialog from './dialog';
+
 
 
 const pages = ['Products', 'Pricing', 'Blog'];
@@ -133,12 +135,15 @@ const styles= {
 function Layout({ children }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const { setCurrDate, currDate, setArticles, userId} = useContext(ContextApp)
+  const { setCurrDate, currDate, setArticles, userId, setUserId} = useContext(ContextApp)
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [openDialog, setOpenDialog] = useState(false);
 
 
-  
+
   const handleDateChange = (newDate) => {
       setArticles([])
       setCurrDate(newDate);
@@ -168,6 +173,52 @@ function Layout({ children }) {
     window.location.reload()
 
   }
+
+  
+  const handleSaveUserId = (newId) => {
+    setUserId(newId);
+    localStorage.setItem("userId", newId);
+    setOpenDialog(false);
+
+  };
+
+  // const openDialogAndSaveUserId = async () => {
+  //   setOpenDialog(true); // Open the dialog
+  
+  //   // Return a Promise that resolves when handleSaveUserId is done
+  //   return new Promise((resolve) => {
+  //     const handleUserSave = (userId) => {
+  //       handleSaveUserId(userId); // Call your existing handleSaveUserId function
+  //       resolve(); // Resolve when the userId is saved
+  //     };
+  
+  //     // Pass `handleUserSave` as a callback to your dialog
+  //     setDialogCallback(() => handleUserSave); 
+  //   });
+  // };
+  
+
+  const handleLogIn = () => {
+    handleCloseUserMenu()
+        setOpenDialog(true); 
+        navigate("/")
+  }
+
+  const handleMyVocab = () => {
+    const storedUserId = localStorage.getItem("userId");
+    // console.log("storedUserId", storedUserId);
+    if (!storedUserId) {
+      // console.log("inside vocab");
+      setOpenDialog(true);
+      // navigate("/saved_words"); 
+    } else {
+      handleCloseNavMenu();
+      navigate("/saved_words");
+    }
+  
+  
+  };
+  
 
   const handleDeleteAccount = async () => {
     handleCloseUserMenu()
@@ -254,10 +305,7 @@ function Layout({ children }) {
           } }>
                   <Typography sx={{ textAlign: 'center' }}>Editorials</Typography>
                 </MenuItem>
-                <MenuItem onClick={() =>  {
-            handleCloseNavMenu()
-            navigate("/saved_words")
-          } }>
+                <MenuItem onClick={() => handleMyVocab() }>
                   <Typography sx={{ textAlign: 'center' }}>My Vocab</Typography>
                 </MenuItem>
                 <MenuItem onClick={() =>  {
@@ -305,10 +353,7 @@ function Layout({ children }) {
           
                 
           sx={{ ...styles.buttonStyle, marginRight: 2 }}
-                onClick={() =>  {
-                  handleCloseNavMenu()
-                  navigate("/saved_words")
-                } }
+                onClick={() =>  handleMyVocab() }
               >
                 My Vocab
               </Button>
@@ -362,8 +407,8 @@ function Layout({ children }) {
     onClose={handleCloseUserMenu}
   >
     {/* {settings.map((setting) => ( */}
-      <MenuItem key="logout" onClick={handleLogout}>
-        <Typography sx={{ textAlign: 'center' }}>Logout</Typography>
+      <MenuItem key="logout" onClick={userId ? handleLogout : handleLogIn}>
+        <Typography sx={{ textAlign: 'center' }}>{userId ? "Logout" : "Login"}</Typography>
       </MenuItem>
       <MenuItem key="del acc" onClick={handleDeleteAccount}>
         <Typography sx={{ textAlign: 'center' }}>Delete Account</Typography>
@@ -375,6 +420,12 @@ function Layout({ children }) {
           </Box>
         </Toolbar>
       </Container>
+      <UserDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        onSaveUserId={handleSaveUserId}
+        
+      />
     </AppBar>
 
       {/* Page Content */}
@@ -397,25 +448,21 @@ function Layout({ children }) {
   <Grid2 sx={{xs:4, sm:4,md:6,}}>
     <Typography variant="body2" color="textSecondary">ReactJS</Typography>
   </Grid2>
-  <Grid2 sx={{xs:4, sm:4,md:6,}}>
-    <Typography variant="body2" color="textSecondary">NodeJS</Typography>
-  </Grid2>
+
   <Grid2 sx={{xs:4, sm:4,md:6,}}>
     <Typography variant="body2" color="textSecondary">Python</Typography>
   </Grid2>
   <Grid2 sx={{xs:4, sm:4,md:6,}}>
     <Typography variant="body2" color="textSecondary">MongoDB</Typography>
   </Grid2>
-  <Grid2 sx={{xs:4, sm:4,md:6,}}>
-    <Typography variant="body2" color="textSecondary">Express</Typography>
-  </Grid2>
+ 
 </Grid2>
 
       </Grid2>
 
       <Grid2 container spacing={3} justifyContent="center" style={{ marginTop: '20px' }}>
         <Grid2 >
-          <IconButton href="https://github.com/VarmaDev390" target="_blank" color="primary">
+          <IconButton href="https://github.com/VarmaDev390/The_Hindu_Editorial_UPSC" target="_blank" color="primary">
             <GitHubIcon />
           </IconButton>
         </Grid2>
@@ -442,6 +489,8 @@ function Layout({ children }) {
         API credits: <Link href="https://dictionaryapi.com/" target="_blank">Merriam-Webster</Link> | <Link href="https://api-inference.huggingface.co/models/facebook/bart-large-cnn" target="_blank">HuggingFace(Bart)</Link>
       </Typography>
     </footer>
+
+
     </div>
   );
 }

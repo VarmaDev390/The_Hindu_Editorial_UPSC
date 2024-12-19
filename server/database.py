@@ -93,7 +93,7 @@ def get_article_by_id(article_id, userId) :
     from utils import extract_difficult_vocabulary
 
     try:
-        article = articles_collection.find_one({"article_id":article_id})
+        article = articles_collection.find_one({"article_id":article_id}, {"_id": 0})
         article_vocabulary = extract_difficult_vocabulary(article['full_content'], userId)
         article['Vocabulary'] = article_vocabulary
         print(f"Fetched article by {article}")

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useContext, useState} from 'react';
 import {
   Card,
   CardMedia,
@@ -12,17 +12,66 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../utils/helper';
+import { ContextApp } from '../utils/context';
+import axios from 'axios';
+import UserDialog from './dialog';
+
 
 // import StarIcon from '@mui/icons-material/Star';
 // import NewReleasesIcon from '@mui/icons-material/NewReleases';
 
 const ArticleCard = ({data}) => {
   const navigate = useNavigate();
+  const { currDate, articles, setArticles, userId, setUserId} = useContext(ContextApp)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [openDialog, setOpenDialog] = useState(false);
   // console.log(data)
+
+
+
+  
+
+  
+    // Fetch data only if userId is available
+    const fetchData = async (data) => {
+      setLoading(true); // Set loading state
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/get-article`,
+          { params: { articleId: data.article_id, userId: userId } }
+        );
+        // console.log("article",response.data.article)
+        // setArticles(response.data.articles);
+        navigate(`/article/:${data.article_id}`, { state: { article: response.data.article } });
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load articles");
+      } finally {
+        setLoading(false); // Set loading state to false after fetching or error
+      }
+    };
+  
+      
+    const handleSaveUserId = (newId) => {
+      setUserId(newId);
+      localStorage.setItem("userId", newId);
+      setOpenDialog(false);
+      fetchData(data);
+    };
+
 
   const handleReadArticle = (data) => {
     try {
-      navigate(`/article/:${data.article_id}`, { state: { article: data } });
+      const storedUserId = localStorage.getItem("userId");
+      // console.log("storedUserId",storedUserId)
+    
+if (!storedUserId) {
+        setOpenDialog(true); // Open dialog if userId is not in localStorage
+      } else {
+        fetchData(data);
+      }
+     
     } catch (error) {
       console.error('Navigation error:', error);
     }
@@ -31,7 +80,8 @@ const ArticleCard = ({data}) => {
 
 
   return (
-    <Card sx={{ maxWidth: 345, borderRadius: 2, boxShadow: 3, cursor: 'pointer' }} onClick={() => handleReadArticle(data)}>
+    <>
+        <Card sx={{ maxWidth: 345, borderRadius: 2, boxShadow: 3, cursor: 'pointer' }} onClick={() => handleReadArticle(data)}>
       {/* <CardMedia
         component="img"
         height="140"
@@ -74,7 +124,16 @@ const ArticleCard = ({data}) => {
           {formatDate(data.published_date)}
         </Typography>
       </Box>
+    
     </Card>
+    <UserDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        onSaveUserId={handleSaveUserId}
+        
+      />
+    </>
+
   );
 };
 

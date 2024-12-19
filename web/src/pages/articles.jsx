@@ -116,13 +116,15 @@ const ArticlesPage = () => {
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
+    // console.log("storedUserId",storedUserId)
   
     // Check and set userId from localStorage
     if (storedUserId && !userId) {
       setUserId(storedUserId); // Set userId only if it's not already set
-    } else if (!storedUserId) {
-      setOpenDialog(true); // Open dialog if userId is not in localStorage
-    }
+    } 
+    // else if (!storedUserId) {
+    //   setOpenDialog(true); // Open dialog if userId is not in localStorage
+    // }
   
     const dateKey = currDate.format("YYYY-MM-DD");
   
@@ -134,7 +136,7 @@ const ArticlesPage = () => {
           `${import.meta.env.VITE_BACKEND_URL}/get-articles`,
           { params: { date: dateKey, userId: userId } }
         );
-        console.log("articles",response.data.articles)
+        // console.log("articles",response.data.articles)
         setArticles(response.data.articles);
       } catch (err) {
         console.error(err);
@@ -145,10 +147,10 @@ const ArticlesPage = () => {
     };
   
     // Run fetchData only if articles are empty and userId is set
-    if (articles.length === 0 && userId) {
+    if (articles.length === 0) {
       fetchData();
     }
-  }, [currDate, userId]);
+  }, [currDate]);
 
   
   const handleSaveUserId = async () => {
@@ -370,7 +372,7 @@ setNewUserId("")
 
         {!loading && error && <Typography color="error">{error}</Typography>}
 
-        {!loading && !error && articles.length > 0 && userId && (
+        {!loading && !error && articles.length > 0 && (
           <Grid2 container spacing={3} sx={{ mb: 3 }}>
             {articles.map((article, index) => (
               <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={index}>
