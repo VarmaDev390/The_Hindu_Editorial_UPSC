@@ -9,7 +9,7 @@ load_dotenv()
 
 # Initialize MongoDB client
 MONGO_URL = os.getenv("MONGODB_URI")
-print("MONGO_URL",MONGO_URL)
+# print("MONGO_URL",MONGO_URL)
 
 client = MongoClient(MONGO_URL)
 db = client["article_summaries_db"]

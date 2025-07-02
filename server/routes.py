@@ -325,4 +325,4 @@ def get_vocabulary():
 
 @routes.route("/test", methods=["GET"])
 def test():
-    return "good"
+    return "good ravi"

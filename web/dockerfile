@@ -1,0 +1,30 @@
+# Build stage
+FROM node:20-alpine
+
+WORKDIR /web
+
+COPY package.json package-lock.json* ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 5173
+
+#  Vite dev server (used by npm run dev) binds to localhost (127.0.0.1)` by default, which makes it inaccessible from outside the container—even though the port is mapped.You need to tell Vite to listen on all interfaces (0.0.0.0).
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+# RUN npm run build
+
+# # Production stage
+# FROM node:20-alpine
+
+# WORKDIR /web
+
+# RUN npm install -g serve
+
+# COPY --from=build /web/dist ./dist
+
+# EXPOSE 8080
+
+# CMD ["serve", "-s", "dist", "-l", "8080"]

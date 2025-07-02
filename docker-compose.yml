@@ -1,0 +1,30 @@
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/server:cached
+# Exclude venv or __pycache__ 
+      - /server/venv
+      - /server/__pycache__
+
+  web:
+    build:
+      context: ./web
+      dockerfile: dockerfile
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./web/.env
+      # provides the startup order of the services. here it tells to start server bfore starting this service
+    volumes:
+      - ./web:/web:cached
+      # Exclude node_modules
+      - /web/node_modules
+    depends_on:
+      - server

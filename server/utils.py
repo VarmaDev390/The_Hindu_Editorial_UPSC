@@ -65,17 +65,22 @@ def fetch_full_article_content(url):
         
         # Find the div with the main article content
         # this is especially for hindu newspaper {"class": "articlebodycontent", "itemprop": "articleBody"}
-        content_div = soup.find("div", {"class": "articlebodycontent", "itemprop": "articleBody"})
-        if not content_div:
+        article_body_div = soup.find("div", itemprop="articleBody")
+
+        # Check if the element was found
+        if article_body_div:
+            # Find all p tags within the article_body_div
+            paragraphs = article_body_div.find_all("p")
+
+            # Extract and print the text from each paragraph
+            full_content = ""
+            for p in paragraphs:
+                full_content += p.get_text(strip=True) + "\n" # Use get_text(strip=True) to remove leading/trailing whitespace
+            print("fullcontetn", full_content)
+            return full_content
+        else:
             return "Full article content not available."
-        
-        # Extract all paragraphs within this div
-        # recursive=False wont check for p in nested div
-        paragraphs = content_div.find_all("p",recursive=False)
-        
-        # Join all paragraph texts into a single content string
-        full_content = " ".join(paragraph.get_text() for paragraph in paragraphs)
-        return full_content
+                
     except Exception as e:
         print(f"Error fetching article content from {url}: {e}")
         return "Full article content not available."
