@@ -49,6 +49,7 @@ jobs:
       - name: Run prefetch script
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          RSS_FEED_URL: ${{ secrets.RSS_FEED_URL }}
         run: python server/prefetch_articles.py
 
   build-and-deploy-server:

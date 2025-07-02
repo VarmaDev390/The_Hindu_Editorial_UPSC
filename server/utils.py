@@ -156,12 +156,12 @@ def convert_utc_to_ist(utc_datetime):
 
 #     return articles
 
-def fetch_articles_metadata(date_str_IST):
+def fetch_articles_metadata(date_str_IST, feedURL):
     """
     Fetch metadata of articles from RSS feed for the given date.
     """
     print("Fetching article metadata from RSS feed")
-    feedURL = os.getenv("RSS_FEED_URL")
+    
     feed = feedparser.parse(feedURL)
     metadata = []
     seen_titles = set()  # Track fetched titles to avoid duplicates
