@@ -27,7 +27,8 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 if __name__ == "__main__":
     print("Connecting to MongoDB...")
-    initialize_db()  # Initialize the DB
+    # cant be run as a corn job because of money constraint
+    # initialize_db()  # Initialize the DB
     port = int(os.getenv("PORT", 5000))  # Default to 5000 if PORT is not set
     app.run(host='0.0.0.0', port=port, debug=True)
     # app.run(debug=True)
