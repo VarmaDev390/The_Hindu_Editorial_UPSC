@@ -28,3 +28,8 @@ services:
       - /web/node_modules
     depends_on:
       - server
+
+#docker compose build
+#docker compose run --rm server python init_db.py
+#docker compose run --rm server python prefetch_articles.py
+#docker compose up server web
