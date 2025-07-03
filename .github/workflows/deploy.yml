@@ -80,7 +80,7 @@ jobs:
           file: ./server/dockerfile # Path to your server's Dockerfile
           push: true # This will push the image to GHCR
           tags: |
-            ghcr.io/${{ github.repository_owner }}/the_editorial/server-app:latest
+            ghcr.io/varmadev390/the_editorial/server-app:latest
           platforms: linux/amd64
 
       - name: Trigger Render Deploy (Server)
@@ -91,11 +91,11 @@ jobs:
             -H "Accept: application/json" \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d '{ "imageUrl": "ghcr.io/${{ github.repository_owner }}/the_editorial/server-app:latest" }' \
+            -d '{ "imageUrl": "ghcr.io/varmadev390/the_editorial/server-app:latest" }' \
             https://api.render.com/v1/services/${{ secrets.RENDER_SERVER_SERVICE_ID }}/deploys
         env:
           # This is the full image URL with the specific tag you want Render to pull
-          IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/server-app:latest
+          IMAGE_TAG_TO_DEPLOY: ghcr.io/varmadev390/the_editorial/server-app:latest
           # We'll use the 'latest' tag for simplicity, but you could use the SHA:
           # IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/server-app:${{ github.sha }}
 
