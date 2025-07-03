@@ -80,8 +80,7 @@ jobs:
           file: ./server/dockerfile # Path to your server's Dockerfile
           push: true # This will push the image to GHCR
           tags: |
-            ghcr.io/${{ github.repository_owner | lower }}/${{ github.repository_name | lower }}/editorialserver:latest
-            ghcr.io/${{ github.repository_owner | lower }}/${{ github.repository_name | lower }}/editorialserver:${{ github.sha }}
+            ghcr.io/${{ github.repository }}/editorialserver:latest
           platforms: linux/amd64
 
       - name: Trigger Render Deploy (Server)
