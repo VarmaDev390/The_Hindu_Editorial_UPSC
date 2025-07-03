@@ -1,5 +1,24 @@
+# # containerisation for frontned only recommended for production not for local development. so you can remove the dokcer service fro web in compose file
+
+# # Below is the docker image for running web service from docker container on local (mostly not recommended for runnign static web services - directly use script commands directly from host machine)
+# FROM node:20-alpine
+
+# WORKDIR /web
+
+# COPY package.json package-lock.json* ./
+
+# RUN npm install
+
+# COPY . .
+
+# EXPOSE 5173
+
+# #  Vite dev server (used by npm run dev) binds to localhost (127.0.0.1)` by default, which makes it inaccessible from outside the container—even though the port is mapped.You need to tell Vite to listen on all interfaces (0.0.0.0).
+# CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+# web service docker image for production not for local development. use above image for local development
 # Build stage
-FROM node:20-alpine
+FROM node:20-alpine AS build
 
 WORKDIR /web
 
@@ -9,22 +28,18 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 5173
+RUN npm run build
 
-#  Vite dev server (used by npm run dev) binds to localhost (127.0.0.1)` by default, which makes it inaccessible from outside the container—even though the port is mapped.You need to tell Vite to listen on all interfaces (0.0.0.0).
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Production stage
+FROM node:20-alpine
 
-# RUN npm run build
+WORKDIR /web
 
-# # Production stage
-# FROM node:20-alpine
+RUN npm install -g serve
 
-# WORKDIR /web
+COPY --from=build /web/dist ./dist
 
-# RUN npm install -g serve
+EXPOSE 8080
 
-# COPY --from=build /web/dist ./dist
+CMD ["serve", "-s", "dist", "-l", "8080"]
 
-# EXPOSE 8080
-
-# CMD ["serve", "-s", "dist", "-l", "8080"]
