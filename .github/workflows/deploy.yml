@@ -69,10 +69,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build server Docker image
-        run: docker build -t ghcr.io/${{ github.repository_owner }}/editorialServer-app:latest ./server
+        run: docker build -t ghcr.io/${{ github.repository_owner }}/editorialserver-app:latest ./server
 
       - name: Push server Docker image
-        run: docker push ghcr.io/${{ github.repository_owner }}/editorialServer-app:latest
+        run: docker push ghcr.io/${{ github.repository_owner }}/editorialserver-app:latest
 
       - name: Trigger Render Deploy (Server)
         # use Render's API to update the image reference
@@ -82,11 +82,11 @@ jobs:
             -H "Accept: application/json" \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d '{ "imageUrl": "ghcr.io/${{ github.repository }}/editorialServer-app:latest" }' \
+            -d '{ "imageUrl": "ghcr.io/${{ github.repository }}/editorialserver-app:latest" }' \
             https://api.render.com/v1/services/${{ secrets.RENDER_SERVER_SERVICE_ID }}/deploys
         env:
           # This is the full image URL with the specific tag you want Render to pull
-          IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/server-app:latest
+          IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/editorialserver-app:latest
           # We'll use the 'latest' tag for simplicity, but you could use the SHA:
           # IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/server-app:${{ github.sha }}
 
@@ -107,10 +107,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build web Docker image
-        run: docker build -t ghcr.io/${{ github.repository_owner }}/editorialWeb-app:latest ./web
+        run: docker build -t ghcr.io/${{ github.repository_owner }}/editorialweb-app:latest ./web
 
       - name: Push web Docker image
-        run: docker push ghcr.io/${{ github.repository_owner }}/editorialWeb-app:latest
+        run: docker push ghcr.io/${{ github.repository_owner }}/editorialweb-app:latest
 
       - name: Trigger Render Deploy (Web)
         run: |
@@ -118,7 +118,7 @@ jobs:
             -H "Accept: application/json" \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d '{ "imageUrl": "ghcr.io/${{ github.repository }}/web-app:latest" }' \
+            -d '{ "imageUrl": "ghcr.io/${{ github.repository }}/editorialweb-app:latest" }' \
             https://api.render.com/v1/services/${{ secrets.RENDER_WEB_SERVICE_ID }}/deploys
         env:
-          IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/web-app:latest
+          IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/editorialweb-app:latest
