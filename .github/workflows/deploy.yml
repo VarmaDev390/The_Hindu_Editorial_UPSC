@@ -71,13 +71,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build server Docker image
-        run: 
+        run: |
           IMAGE_TAG="ghcr.io/${{ github.repository }}/editorialserver-app:latest"
           echo "Building image with tag: $IMAGE_TAG"
           docker build -t "$IMAGE_TAG" ./server
 
       - name: Push server Docker image to GHCR
-        run: 
+        run: |
           IMAGE_TAG="ghcr.io/${{ github.repository }}/editorialserver-app:latest"
           echo "Building image with tag: $IMAGE_TAG"
           docker push -t "$IMAGE_TAG" ./server
@@ -115,13 +115,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build web Docker image
-        run:
+        run: |
           IMAGE_TAG="ghcr.io/${{ github.repository }}/editorialweb-app:latest"
           echo "Building image with tag: $IMAGE_TAG"
           docker build -t "$IMAGE_TAG" ./web
 
       - name: Push web Docker image to GHCR
-        run:
+        run: |
           IMAGE_TAG="ghcr.io/${{ github.repository }}/editorialweb-app:latest"
           echo "Building image with tag: $IMAGE_TAG"
           docker push -t "$IMAGE_TAG" ./web
