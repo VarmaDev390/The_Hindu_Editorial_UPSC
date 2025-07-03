@@ -70,17 +70,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build server Docker image
-        run: |
-          IMAGE_TAG="ghcr.io/${{ github.repository }}/editorialserver:latest"
-          echo "Building image with tag: $IMAGE_TAG"
-          docker build -t "$IMAGE_TAG" ./server
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Push server Docker image to GHCR
-        run: |
-          IMAGE_TAG="ghcr.io/${{ github.repository }}/editorialserver:latest"
-          echo "Building image with tag: $IMAGE_TAG"
-          docker push -t "$IMAGE_TAG" ./server
+      - name: Build and Push Server Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server # Path to your server's Dockerfile context
+          file: ./server/dockerfile # Path to your server's Dockerfile
+          push: true # This will push the image to GHCR
+          tags: |
+            ghcr.io/${{ github.repository }}/editorialserver-app:latest
+            ghcr.io/${{ github.repository }}/editorialserver-app:${{ github.sha }}
+          platforms: linux/amd64
 
       - name: Trigger Render Deploy (Server)
         # use Render's API to update the image reference
@@ -90,11 +92,11 @@ jobs:
             -H "Accept: application/json" \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d '{ "imageUrl": "ghcr.io/${{ github.repository }}/editorialserver:latest" }' \
+            -d '{ "imageUrl": "ghcr.io/${{ github.repository }}/editorialserver-app:latest" }' \
             https://api.render.com/v1/services/${{ secrets.RENDER_SERVER_SERVICE_ID }}/deploys
         env:
           # This is the full image URL with the specific tag you want Render to pull
-          IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/editorialserver:latest
+          IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/editorialserver-app:latest
           # We'll use the 'latest' tag for simplicity, but you could use the SHA:
           # IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/server-app:${{ github.sha }}
 
@@ -114,17 +116,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build web Docker image
-        run: |
-          IMAGE_TAG="ghcr.io/${{ github.repository }}/editorialweb:latest"
-          echo "Building image with tag: $IMAGE_TAG"
-          docker build -t "$IMAGE_TAG" ./web
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Push web Docker image to GHCR
-        run: |
-          IMAGE_TAG="ghcr.io/${{ github.repository }}/editorialweb:latest"
-          echo "Building image with tag: $IMAGE_TAG"
-          docker push -t "$IMAGE_TAG" ./web
+      - name: Build and Push Web Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./web
+          file: ./web/dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/editorialweb-app:latest
+            ghcr.io/${{ github.repository }}/editorialweb-app:${{ github.sha }}
+          platforms: linux/amd64
 
       - name: Trigger Render Deploy (Web)
         run: |
@@ -132,7 +136,7 @@ jobs:
             -H "Accept: application/json" \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d '{ "imageUrl": "ghcr.io/${{ github.repository }}/editorialweb:latest" }' \
+            -d '{ "imageUrl": "ghcr.io/${{ github.repository }}/editorialweb-app:latest" }' \
             https://api.render.com/v1/services/${{ secrets.RENDER_WEB_SERVICE_ID }}/deploys
         env:
-          IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/editorialweb:latest
+          IMAGE_TAG_TO_DEPLOY: ghcr.io/${{ github.repository }}/editorialweb-app:latest
