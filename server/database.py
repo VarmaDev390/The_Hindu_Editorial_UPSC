@@ -64,7 +64,7 @@ def get_all_articles_by_date(datetime_in_IST, userId):
             article['published_date'] = article['published_date'].replace(tzinfo=timezone.utc)
             article['Vocabulary'] = extract_difficult_vocabulary(article['full_content'], userId)
 
-        print(f"Fetched {len(articles)} articles for date {datetime_in_IST}")
+        print(f"Fetched {len(articles)} articles for date {datetime_in_IST} from database")
         return articles
     except Exception as e:
         print(f"Error fetching articles by date: {e}")
