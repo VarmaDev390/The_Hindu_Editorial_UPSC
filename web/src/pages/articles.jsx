@@ -58,7 +58,7 @@ const styles= {
 const ArticlesPage = () => {
   const { currDate, articles, setArticles, userId, setUserId} = useContext(ContextApp)
 
-  const [loading, setLoading] = useState(articles.length === 0 && userId ? true: false);
+const [loading, setLoading] = useState((articles && articles.length === 0 && userId) ? true : false);
   const [dialogStep, setDialogStep] = useState("choose");
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
