@@ -76,7 +76,7 @@ def fetch_full_article_content(url):
             full_content = ""
             for p in paragraphs:
                 full_content += p.get_text(strip=True) + "\n" # Use get_text(strip=True) to remove leading/trailing whitespace
-            print("fullcontetn", full_content)
+            
             return full_content
         else:
             return "Full article content not available."
@@ -182,6 +182,7 @@ def fetch_articles_metadata(date_str_IST, feedURL):
                 })
         except Exception as e:
             print(f"Error parsing RSS entry: {e}")
+    print(f"Fetched {len(metadata)} articles from RSS feed.")
     return metadata
 
 # def fetch_articles_metadata(date_str_IST):

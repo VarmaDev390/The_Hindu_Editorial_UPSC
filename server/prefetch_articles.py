@@ -4,6 +4,8 @@ from database import get_all_articles_by_date, insert_article
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
 feedURL = os.getenv("RSS_FEED_URL")
 
 def prefetch_articles_for_date(date_str, userId):
@@ -12,7 +14,11 @@ def prefetch_articles_for_date(date_str, userId):
     db_titles = set(article["title"] for article in db_articles)
 
     rss_metadata = fetch_articles_metadata(date_str, feedURL)
-    new_articles_metadata = [a for a in rss_metadata if a["title"] not in db_titles]
+    # Filter out articles that are already in the database
+    new_articles_metadata = []
+    for article in rss_metadata:
+        if article["title"] not in db_titles:
+            new_articles_metadata.append(article)
     new_articles = process_new_articles(new_articles_metadata, userId)
 
     for article in new_articles:
