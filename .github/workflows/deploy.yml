@@ -124,6 +124,8 @@ jobs:
           tags: |
             ghcr.io/varmadev390/the_editorial/editorialweb-app:latest
           platforms: linux/amd64
+          build-args: |
+            VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}
 
       - name: Trigger Render Deploy (Web)
         env:

@@ -60,7 +60,7 @@ const ArticlesPage = () => {
 
 const [loading, setLoading] = useState((articles && articles.length === 0 && userId) ? true : false);
   const [dialogStep, setDialogStep] = useState("choose");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [newUserId, setNewUserId] = useState("");
   const [existingUserId, setExistingUserId] = useState("");
@@ -74,6 +74,7 @@ const [loading, setLoading] = useState((articles && articles.length === 0 && use
 
   // const articlesCache = useRef({});
   const navigate = useNavigate()
+  console.log("env",import.meta.env.VITE_BACKEND_URL)
 
   // useEffect(() => {
   //   // console.log("inside useEffect articles")
