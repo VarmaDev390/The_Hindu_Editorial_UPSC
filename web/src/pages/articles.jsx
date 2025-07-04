@@ -74,7 +74,6 @@ const [loading, setLoading] = useState((articles && articles.length === 0 && use
 
   // const articlesCache = useRef({});
   const navigate = useNavigate()
-  console.log("env",import.meta.env.VITE_BACKEND_URL)
 
   // useEffect(() => {
   //   // console.log("inside useEffect articles")
